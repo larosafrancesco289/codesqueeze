@@ -1,36 +1,170 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🗜️ CodeSqueeze
 
-## Getting Started
+**Squeeze your entire codebase into LLM-friendly format** - A modern web app that transforms folder-based codebases into single, well-structured text files perfect for AI analysis and assistance.
 
-First, run the development server:
+## ✨ Features
+
+- **📁 Smart Folder Selection** - Drag & drop or browse to select entire directories
+- **🔍 Intelligent Filtering** - Automatically excludes binary files, node_modules, and hidden files
+- **🌳 Visual File Tree** - Interactive tree view with checkboxes for granular file selection
+- **⚡ Memory Efficient** - Streams large codebases without overwhelming browser memory
+- **📊 Progress Tracking** - Real-time progress bar with file-by-file processing status
+- **📋 Copy to Clipboard** - One-click copy with fallback for large content
+- **💾 Download Option** - Download as .txt file with SHA-256 checksum
+- **🌙 Dark Mode** - Modern UI with automatic dark/light mode switching
+- **⌨️ Keyboard Shortcuts** - ⌘+O (open folder), ⌘+Shift+C (copy result)
+- **🔒 Privacy First** - All processing happens locally, no server uploads
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 15.3 + React 19 + TypeScript 5.8
+- **Styling**: Tailwind CSS v4 + shadcn/ui components
+- **Testing**: Vitest + Playwright + React Testing Library
+- **File Handling**: File System Access API + webkitdirectory fallback
+- **Build**: Turbopack-powered builds with ESLint 9 + Prettier
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 20+ or 22 LTS
+- Modern browser with File API support
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/yourusername/codesqueeze.git
+cd codesqueeze
+
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Building for Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Build the application
+npm run build
 
-## Learn More
+# Start production server
+npm run start
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 📖 Usage
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Select a Folder**: Click "Choose Folder" or drag & drop a directory
+2. **Review Files**: Use the file tree to select/deselect specific files
+3. **Process**: Click "Process Files" to concatenate selected files
+4. **Export**: Copy to clipboard or download as .txt file
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Output Format
 
-## Deploy on Vercel
+CodeSqueeze generates structured output with:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+/* === CODEBASE INDEX === */
+/* Generated: 2025-01-20T10:30:00.000Z */
+/* Total Files: 15 */
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+/* 1. src/index.ts (2.3 KB) */
+/* 2. src/components/App.tsx (4.1 KB) */
+...
+
+/* === END INDEX === */
+
+/* === BEGIN src/index.ts === */
+// Your file content here
+/* === END src/index.ts === */
+
+/* === BEGIN src/components/App.tsx === */
+// Your file content here
+/* === END src/components/App.tsx === */
+```
+
+## 🧪 Testing
+
+```bash
+# Run unit tests
+npm run test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run E2E tests
+npm run test:e2e
+
+# Type checking
+npm run type-check
+```
+
+## 🔧 Development
+
+```bash
+# Format code
+npm run format
+
+# Check formatting
+npm run format:check
+
+# Lint code
+npm run lint
+```
+
+### Git Hooks
+
+Pre-commit hooks automatically run linting and formatting via Husky + lint-staged.
+
+## 🌐 Browser Support
+
+- **Desktop**: Chrome 86+, Firefox 82+, Safari 14+, Edge 86+
+- **Mobile**: Chrome Android 132+, Safari iOS 14+
+
+### File System Access API Support
+
+- **Full support**: Chrome/Edge 86+, Opera 72+
+- **Fallback**: Uses `webkitdirectory` on unsupported browsers
+
+## ⚠️ Limitations
+
+- **Clipboard Size**: ~150KB safe limit (varies by browser)
+- **File Size**: Individual files >1MB excluded for performance
+- **Memory**: Designed for codebases up to ~100MB total
+
+## 🔐 Security & Privacy
+
+- **100% Client-Side**: No data leaves your browser
+- **No Analytics**: No tracking or telemetry
+- **Local Storage**: Only preferences (dark mode, ignore patterns)
+
+## 📋 Default Ignore Patterns
+
+CodeSqueeze automatically excludes:
+
+- `node_modules/`, `.git/`, `.next/`, `dist/`, `build/`
+- Hidden files (starting with `.`)
+- Binary files (images, videos, archives, fonts)
+- Files larger than 1MB
+
+## 🤝 Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+## 🙏 Acknowledgments
+
+- [shadcn/ui](https://ui.shadcn.com/) for beautiful components
+- [Lucide React](https://lucide.dev/) for icons
+- [Radix UI](https://www.radix-ui.com/) for accessible primitives
+
+---
+
+**Made with ❤️ for the AI development community**
