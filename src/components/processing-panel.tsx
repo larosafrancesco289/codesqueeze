@@ -18,9 +18,7 @@ import {
   Download, 
   CheckCircle, 
   AlertTriangle,
-  Loader2,
-  Sparkles,
-  Zap
+  Loader2
 } from 'lucide-react';
 
 interface ProcessingPanelProps {

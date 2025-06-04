@@ -331,7 +331,7 @@ export function FilePicker({
       <input
         ref={fileInputRef}
         type="file"
-        // @ts-ignore
+        // @ts-expect-error webkitdirectory is not part of the standard HTML input attributes but is needed for directory selection in webkit browsers
         webkitdirectory="true"
         directory="true"
         multiple

@@ -13,7 +13,6 @@ import {
   Square,
   FileText,
   FileX,
-  ChevronDown,
   ChevronRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';

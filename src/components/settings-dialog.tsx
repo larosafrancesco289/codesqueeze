@@ -120,7 +120,7 @@ export function SettingsDialog({ ignorePatterns, onIgnorePatternsChange }: Setti
           </DialogTitle>
           <DialogDescription>
             Configure patterns to ignore files and directories when processing your codebase.
-            Ignored files won't appear in the file tree or final output.
+            Ignored files won&apos;t appear in the file tree or final output.
           </DialogDescription>
         </DialogHeader>
 
@@ -133,9 +133,9 @@ export function SettingsDialog({ ignorePatterns, onIgnorePatternsChange }: Setti
                 <p className="font-medium mb-1">Pattern examples:</p>
                 <ul className="space-y-1 text-xs">
                   <li><code>*.log</code> - matches all .log files</li>
-                  <li><code>test_*</code> - matches files starting with "test_"</li>
-                  <li><code>temp</code> - matches files/folders containing "temp"</li>
-                  <li><code>.env</code> - matches exact filename ".env"</li>
+                  <li><code>test_*</code> - matches files starting with &quot;test_&quot;</li>
+                  <li><code>temp</code> - matches files/folders containing &quot;temp&quot;</li>
+                  <li><code>.env</code> - matches exact filename &quot;.env&quot;</li>
                 </ul>
               </div>
             </div>
@@ -223,7 +223,7 @@ export function SettingsDialog({ ignorePatterns, onIgnorePatternsChange }: Setti
           {/* Current count */}
           <div className="text-sm text-muted-foreground border-t pt-4">
             <p>
-              Currently ignoring <strong>{ignorePatterns.length}</strong> pattern{ignorePatterns.length !== 1 ? 's' : ''}
+              Currently ignoring <strong>{ignorePatterns.length}</strong> pattern{ignorePatterns.length !== 1 ? "\u2019s" : ""}
               {ignorePatterns.length > 0 && (
                 <span className="ml-2">
                   ({selectedCommonPatterns.size} common, {customPatterns.length} custom)

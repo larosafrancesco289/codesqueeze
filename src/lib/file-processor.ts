@@ -98,8 +98,6 @@ export function shouldIgnoreFile(
   path: string,
   ignorePatterns: string[] = []
 ): boolean {
-  const allPatterns = [...DEFAULT_IGNORE_PATTERNS, ...ignorePatterns];
-
   // Extract filename from path
   const fileName = path.split('/').pop() || '';
   const pathLower = path.toLowerCase();
@@ -376,7 +374,6 @@ export async function* processFiles(
 ): AsyncGenerator<string, ProcessingResult> {
   const includedFiles = files.filter((f) => f.isIncluded && f.isText);
   const totalSize = includedFiles.reduce((sum, f) => sum + f.size, 0);
-  let processedSize = 0;
   let fullContent = '';
   let lineCount = 0;
 
@@ -426,8 +423,6 @@ export async function* processFiles(
       yield errorSection;
       lineCount += 1;
     }
-
-    processedSize += entry.size;
   }
 
   onProgress?.({
