@@ -68,12 +68,15 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
   const stats = useMemo(() => {
     const included = files.filter(f => f.isIncluded);
     const textFiles = files.filter(f => f.isText);
+    const binaryFiles = files.filter(f => !f.isText);
     
     return {
       total: files.length,
       textFiles: textFiles.length,
+      binaryFiles: binaryFiles.length,
       included: included.length,
       totalSize: included.reduce((sum, f) => sum + f.size, 0),
+      totalTextSize: textFiles.reduce((sum, f) => sum + f.size, 0),
     };
   }, [files]);
 
@@ -155,9 +158,16 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <h3 className="text-lg font-semibold">Files to process</h3>
-          <p className="text-sm text-muted-foreground">
-            {stats.included} of {stats.textFiles} text files selected ({formatBytes(stats.totalSize)})
-          </p>
+          <div className="space-y-1">
+            <p className="text-sm text-muted-foreground">
+              {stats.included} of {stats.textFiles} text files selected ({formatBytes(stats.totalSize)})
+            </p>
+            {stats.binaryFiles > 0 && (
+              <p className="text-xs text-muted-foreground">
+                {stats.binaryFiles} binary files excluded • Total text files: {formatBytes(stats.totalTextSize)}
+              </p>
+            )}
+          </div>
         </div>
         
         <div className="flex gap-2">

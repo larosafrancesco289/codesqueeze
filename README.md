@@ -6,6 +6,7 @@
 
 - **📁 Smart Folder Selection** - Drag & drop or browse to select entire directories
 - **🔍 Intelligent Filtering** - Automatically excludes binary files, node_modules, and hidden files
+- **⚙️ Customizable Ignore Patterns** - Configure which files to ignore with wildcard support (*.log, test_*, etc.)
 - **🌳 Visual File Tree** - Interactive tree view with checkboxes for granular file selection
 - **⚡ Memory Efficient** - Streams large codebases without overwhelming browser memory
 - **📊 Progress Tracking** - Real-time progress bar with file-by-file processing status
@@ -59,9 +60,22 @@ npm run start
 ## 📖 Usage
 
 1. **Select a Folder**: Click "Choose Folder" or drag & drop a directory
-2. **Review Files**: Use the file tree to select/deselect specific files
-3. **Process**: Click "Process Files" to concatenate selected files
-4. **Export**: Copy to clipboard or download as .txt file
+2. **Configure Settings**: Use the settings button (⚙️) to customize ignore patterns
+3. **Review Files**: Use the file tree to select/deselect specific files
+4. **Process**: Click "Process Files" to concatenate selected files
+5. **Export**: Copy to clipboard or download as .txt file
+
+### Ignore Patterns
+
+The settings dialog allows you to configure which files to ignore during processing:
+
+- **Common Patterns**: Pre-defined patterns for log files, test files, temporary files, etc.
+- **Custom Patterns**: Add your own patterns with wildcard support
+- **Examples**:
+  - `*.log` - matches all .log files
+  - `test_*` - matches files starting with "test_"
+  - `temp` - matches files/folders containing "temp"
+  - `.env` - matches exact filename ".env"
 
 ### Output Format
 

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { FilePicker } from '@/components/file-picker';
 import { FileTree } from '@/components/file-tree';
 import { ProcessingPanel } from '@/components/processing-panel';
+import { SettingsDialog } from '@/components/settings-dialog';
 import { FileEntry } from '@/lib/file-processor';
 import { Button } from '@/components/ui/button';
 import { Moon, Sun, Zap } from 'lucide-react';
@@ -72,6 +73,10 @@ export default function Home() {
     setDarkMode(prev => !prev);
   }, []);
 
+  const handleIgnorePatternsChange = useCallback((newPatterns: string[]) => {
+    setIgnorePatterns(newPatterns);
+  }, []);
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -108,14 +113,20 @@ export default function Home() {
             </div>
           </div>
           
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleDarkMode}
-            aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-          >
-            {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </Button>
+          <div className="flex items-center gap-2">
+            <SettingsDialog 
+              ignorePatterns={ignorePatterns}
+              onIgnorePatternsChange={handleIgnorePatternsChange}
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleDarkMode}
+              aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -141,7 +152,8 @@ export default function Home() {
               <div className="space-y-2">
                 <h3 className="font-semibold">Smart Filtering</h3>
                 <p className="text-muted-foreground">
-                  Automatically excludes binary files, node_modules, and other non-essential files
+                  Automatically excludes binary files, node_modules, and other non-essential files.
+                  Use settings to customize ignore patterns.
                 </p>
               </div>
               <div className="space-y-2">
@@ -160,6 +172,33 @@ export default function Home() {
           </div>
         ) : (
           <div className="space-y-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold">Selected Files</h2>
+                <p className="text-muted-foreground">
+                  Review and select files to include in your codebase export
+                  {ignorePatterns.length > 0 && (
+                    <span className="ml-2 text-sm">
+                      • {ignorePatterns.length} ignore pattern{ignorePatterns.length !== 1 ? 's' : ''} active
+                    </span>
+                  )}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <SettingsDialog 
+                  ignorePatterns={ignorePatterns}
+                  onIgnorePatternsChange={handleIgnorePatternsChange}
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => setFiles([])}
+                  className="gap-2"
+                >
+                  Start Over
+                </Button>
+              </div>
+            </div>
+            
             <FileTree
               files={files}
               onFileToggle={handleFileToggle}
@@ -168,16 +207,6 @@ export default function Home() {
             />
             
             <ProcessingPanel files={files} />
-            
-            <div className="text-center">
-              <Button
-                variant="outline"
-                onClick={() => setFiles([])}
-                className="gap-2"
-              >
-                Start Over
-              </Button>
-            </div>
           </div>
         )}
       </main>

@@ -368,11 +368,17 @@ export function FilePicker({
         </div>
       </div>
 
-      <div className="mt-4 text-xs text-muted-foreground text-center">
+      <div className="mt-4 text-xs text-muted-foreground text-center space-y-2">
         <p>
           Only text files will be processed. Binary files, node_modules, and
           hidden files are excluded by default.
         </p>
+        {ignorePatterns.length > 0 && (
+          <p className="text-orange-600 dark:text-orange-400">
+            {ignorePatterns.length} custom ignore pattern{ignorePatterns.length !== 1 ? 's' : ''} active. 
+            Click settings to manage patterns.
+          </p>
+        )}
       </div>
     </div>
   );

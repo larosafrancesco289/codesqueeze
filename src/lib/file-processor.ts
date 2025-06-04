@@ -67,24 +67,82 @@ const DEFAULT_IGNORE_PATTERNS = [
   '.cache',
 ];
 
+/**
+ * Convert a glob pattern to a regular expression
+ */
+function globToRegex(pattern: string): RegExp {
+  // Escape special regex characters except * and ?
+  const escaped = pattern
+    .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+    .replace(/\*/g, '.*')
+    .replace(/\?/g, '.');
+  
+  return new RegExp(`^${escaped}$`, 'i'); // Case insensitive
+}
+
+/**
+ * Check if a filename matches a pattern (supports wildcards)
+ */
+function matchesPattern(filename: string, pattern: string): boolean {
+  // Simple string contains check for non-wildcard patterns
+  if (!pattern.includes('*') && !pattern.includes('?')) {
+    return filename.toLowerCase().includes(pattern.toLowerCase());
+  }
+  
+  // Use regex for wildcard patterns
+  const regex = globToRegex(pattern);
+  return regex.test(filename);
+}
+
 export function shouldIgnoreFile(
   path: string,
   ignorePatterns: string[] = []
 ): boolean {
   const allPatterns = [...DEFAULT_IGNORE_PATTERNS, ...ignorePatterns];
 
-  // Check if file is in an ignored directory
-  for (const pattern of allPatterns) {
+  // Extract filename from path
+  const fileName = path.split('/').pop() || '';
+  const pathLower = path.toLowerCase();
+
+  // Check if file is in an ignored directory 
+  for (const pattern of DEFAULT_IGNORE_PATTERNS) {
+    // Directory patterns - check if file is inside ignored directory
     if (
-      path.includes(`/${pattern}/`) ||
-      path.includes(`${pattern}/`) ||
-      path.endsWith(`/${pattern}`)
+      pathLower.includes(`/${pattern.toLowerCase()}/`) ||
+      pathLower.includes(`${pattern.toLowerCase()}/`) ||
+      pathLower.endsWith(`/${pattern.toLowerCase()}`)
     ) {
       return true;
     }
   }
+  
+  // Check custom ignore patterns (support wildcards and directory checks)
+  for (const pattern of ignorePatterns) {
+    // Check if it's a directory pattern (contains no file extension indicators)
+    if (!pattern.includes('.') && !pattern.includes('*')) {
+      // Treat as directory pattern
+      const patternLower = pattern.toLowerCase();
+      if (
+        pathLower.includes(`/${patternLower}/`) ||
+        pathLower.includes(`${patternLower}/`) ||
+        pathLower.endsWith(`/${patternLower}`)
+      ) {
+        return true;
+      }
+    } else {
+      // Check against filename with wildcard support
+      if (matchesPattern(fileName, pattern)) {
+        return true;
+      }
+      
+      // Also check against full path for patterns that might include path separators
+      if (pattern.includes('/') && matchesPattern(path, pattern)) {
+        return true;
+      }
+    }
+  }
 
-  // Check specific hidden files to ignore, but allow common config files
+  // List of allowed config files (should not be ignored even though they're hidden)
   const allowedHiddenFiles = [
     '.gitignore',
     '.gitattributes',
@@ -103,11 +161,6 @@ export function shouldIgnoreFile(
     '.babelrc',
     '.babelrc.js',
     '.babelrc.json',
-    '.env',
-    '.env.local',
-    '.env.development',
-    '.env.production',
-    '.env.example',
     '.editorconfig',
     '.nvmrc',
     '.yarnrc',
@@ -115,15 +168,41 @@ export function shouldIgnoreFile(
     '.dockerignore',
     '.stylelintrc',
     '.postcssrc',
+    '.husky',
   ];
 
-  const fileName = path.split('/').pop() || '';
+  // List of allowed hidden directories
+  const allowedHiddenDirs = [
+    '.github',  // GitHub workflows and templates
+    '.husky',   // Git hooks
+  ];
 
-  // If it's a hidden file (starts with .), check if it's allowed
-  if (fileName.startsWith('.')) {
-    return !allowedHiddenFiles.some(
-      (allowed) => fileName === allowed || fileName.startsWith(allowed + '.')
-    );
+  // Check each part of the path for hidden directories/files
+  const pathParts = path.split('/');
+  for (let i = 0; i < pathParts.length; i++) {
+    const part = pathParts[i];
+    
+    if (part.startsWith('.') && part !== '.' && part !== '..') {
+      // This is a hidden directory or file
+      
+      if (i === pathParts.length - 1) {
+        // This is the filename (last part) - check if it's allowed
+        const isAllowed = allowedHiddenFiles.some(
+          (allowed) => part === allowed || part.startsWith(allowed + '.')
+        );
+        return !isAllowed; // If allowed, don't ignore (false), if not allowed, ignore (true)
+      } else {
+        // This is a directory name - check if it's allowed
+        if (!allowedHiddenDirs.includes(part)) {
+          return true; // Ignore files in hidden directories
+        }
+      }
+    }
+  }
+
+  // Handle special cases for '.' and '..' at root level
+  if (path === '.' || path === '..') {
+    return true;
   }
 
   return false;
