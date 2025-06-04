@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FilePicker } from '@/components/file-picker';
 import { FileTree } from '@/components/file-tree';
 import { ProcessingPanel } from '@/components/processing-panel';
 import { SettingsDialog } from '@/components/settings-dialog';
 import { FileEntry } from '@/lib/file-processor';
 import { Button } from '@/components/ui/button';
-import { Moon, Sun, Zap } from 'lucide-react';
+import { Moon, Sun, Zap, Code, FileText, Download } from 'lucide-react';
 
 export default function Home() {
   const [files, setFiles] = useState<FileEntry[]>([]);
@@ -101,117 +102,264 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="border-b border-border">
+      <motion.header 
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="border-b border-border backdrop-blur-sm bg-background/95"
+      >
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <motion.div 
+            className="flex items-center gap-3"
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          >
             <div className="flex items-center gap-2">
-              <Zap className="h-6 w-6 text-primary" />
-              <h1 className="text-xl font-bold">CodeSqueeze</h1>
+              <motion.div
+                animate={{ 
+                  rotate: [0, 5, -5, 0],
+                  scale: [1, 1.1, 1]
+                }}
+                transition={{ 
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatDelay: 3,
+                  ease: "easeInOut"
+                }}
+              >
+                <Zap className="h-6 w-6 text-primary" />
+              </motion.div>
+              <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                CodeSqueeze
+              </h1>
             </div>
-            <div className="text-sm text-muted-foreground">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="text-sm text-muted-foreground"
+            >
               Squeeze your codebase into LLM-friendly format
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
           
-          <div className="flex items-center gap-2">
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="flex items-center gap-2"
+          >
             <SettingsDialog 
               ignorePatterns={ignorePatterns}
               onIgnorePatternsChange={handleIgnorePatternsChange}
             />
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleDarkMode}
-              aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-            >
-              {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </Button>
-          </div>
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleDarkMode}
+                aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                <AnimatePresence mode="wait">
+                  {darkMode ? (
+                    <motion.div
+                      key="sun"
+                      initial={{ rotate: -90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: 90, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Sun className="h-4 w-4" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="moon"
+                      initial={{ rotate: 90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: -90, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Moon className="h-4 w-4" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </Button>
+            </motion.div>
+          </motion.div>
         </div>
-      </header>
+      </motion.header>
 
       <main className="container mx-auto px-4 py-8 space-y-12">
-        {files.length === 0 ? (
-          <div className="text-center space-y-8">
-            <div className="space-y-4">
-              <h2 className="text-3xl font-bold tracking-tight">
-                Transform your codebase into AI-ready format
-              </h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Select a folder and CodeSqueeze will concatenate all your source files 
-                into a single, well-structured text file perfect for AI analysis and assistance.
-              </p>
-            </div>
-            
-            <FilePicker 
-              onFilesSelected={handleFilesSelected}
-              ignorePatterns={ignorePatterns}
-            />
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto text-sm">
-              <div className="space-y-2">
-                <h3 className="font-semibold">Smart Filtering</h3>
-                <p className="text-muted-foreground">
-                  Automatically excludes binary files, node_modules, and other non-essential files.
-                  Use settings to customize ignore patterns.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="font-semibold">Memory Efficient</h3>
-                <p className="text-muted-foreground">
-                  Streams large codebases without overwhelming your browser memory
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="font-semibold">Export Options</h3>
-                <p className="text-muted-foreground">
-                  Copy to clipboard or download as .txt with SHA-256 checksum
-                </p>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold">Selected Files</h2>
-                <p className="text-muted-foreground">
-                  Review and select files to include in your codebase export
-                  {ignorePatterns.length > 0 && (
-                    <span className="ml-2 text-sm">
-                      • {ignorePatterns.length} ignore pattern{ignorePatterns.length !== 1 ? 's' : ''} active
-                    </span>
-                  )}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <SettingsDialog 
-                  ignorePatterns={ignorePatterns}
-                  onIgnorePatternsChange={handleIgnorePatternsChange}
-                />
-                <Button
-                  variant="outline"
-                  onClick={() => setFiles([])}
-                  className="gap-2"
+        <AnimatePresence mode="wait">
+          {files.length === 0 ? (
+            <motion.div
+              key="landing"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="text-center space-y-8"
+            >
+              <motion.div 
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.8 }}
+                className="space-y-4"
+              >
+                <motion.h2 
+                  className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3, duration: 0.6 }}
                 >
-                  Start Over
-                </Button>
-              </div>
-            </div>
-            
-            <FileTree
-              files={files}
-              onFileToggle={handleFileToggle}
-              onSelectAll={handleSelectAll}
-              onSelectNone={handleSelectNone}
-            />
-            
-            <ProcessingPanel files={files} />
-          </div>
-        )}
+                  Transform your codebase into AI-ready format
+                </motion.h2>
+                <motion.p 
+                  className="text-xl text-muted-foreground max-w-2xl mx-auto"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.6 }}
+                >
+                  Select a folder and CodeSqueeze will concatenate all your source files 
+                  into a single, well-structured text file perfect for AI analysis and assistance.
+                </motion.p>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.7, duration: 0.6 }}
+              >
+                <FilePicker 
+                  onFilesSelected={handleFilesSelected}
+                  ignorePatterns={ignorePatterns}
+                />
+              </motion.div>
+              
+              <motion.div 
+                className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto text-sm"
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.9, duration: 0.8 }}
+              >
+                {[
+                  {
+                    icon: <Code className="h-5 w-5 text-primary" />,
+                    title: "Smart Filtering",
+                    description: "Automatically excludes binary files, node_modules, and other non-essential files. Use settings to customize ignore patterns."
+                  },
+                  {
+                    icon: <FileText className="h-5 w-5 text-primary" />,
+                    title: "Memory Efficient",
+                    description: "Streams large codebases without overwhelming your browser memory"
+                  },
+                  {
+                    icon: <Download className="h-5 w-5 text-primary" />,
+                    title: "Export Options",
+                    description: "Copy to clipboard or download as .txt with SHA-256 checksum"
+                  }
+                ].map((feature, index) => (
+                  <motion.div
+                    key={feature.title}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.1 + index * 0.1, duration: 0.6 }}
+                    whileHover={{ 
+                      scale: 1.05,
+                      boxShadow: "0 10px 25px rgba(0,0,0,0.1)"
+                    }}
+                    className="space-y-2 p-4 rounded-lg border border-border/50 bg-card/50 backdrop-blur-sm transition-colors hover:bg-card"
+                  >
+                    <div className="flex items-center gap-2">
+                      {feature.icon}
+                      <h3 className="font-semibold">{feature.title}</h3>
+                    </div>
+                    <p className="text-muted-foreground">
+                      {feature.description}
+                    </p>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="files"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="space-y-8"
+            >
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.5 }}
+                className="flex items-center justify-between"
+              >
+                <div>
+                  <h2 className="text-2xl font-bold">Selected Files</h2>
+                  <p className="text-muted-foreground">
+                    Review and select files to include in your codebase export
+                    {ignorePatterns.length > 0 && (
+                      <span className="ml-2 text-sm">
+                        • {ignorePatterns.length} ignore pattern{ignorePatterns.length !== 1 ? 's' : ''} active
+                      </span>
+                    )}
+                  </p>
+                </div>
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2, duration: 0.5 }}
+                  className="flex items-center gap-2"
+                >
+                  <SettingsDialog 
+                    ignorePatterns={ignorePatterns}
+                    onIgnorePatternsChange={handleIgnorePatternsChange}
+                  />
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button
+                      variant="outline"
+                      onClick={() => setFiles([])}
+                      className="gap-2"
+                    >
+                      Start Over
+                    </Button>
+                  </motion.div>
+                </motion.div>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+              >
+                <FileTree
+                  files={files}
+                  onFileToggle={handleFileToggle}
+                  onSelectAll={handleSelectAll}
+                  onSelectNone={handleSelectNone}
+                />
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.6 }}
+              >
+                <ProcessingPanel files={files} />
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
 
-      <footer className="border-t border-border mt-16">
+      <motion.footer 
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.2, duration: 0.6 }}
+        className="border-t border-border mt-16"
+      >
         <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
           <p>
             All processing happens locally in your browser. No files are uploaded to any server.
@@ -220,7 +368,7 @@ export default function Home() {
             Keyboard shortcuts: ⌘+O (Choose folder), ⌘+Shift+C (Copy result)
           </p>
         </div>
-      </footer>
+      </motion.footer>
     </div>
   );
 }

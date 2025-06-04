@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { FileEntry } from '@/lib/file-processor';
@@ -11,7 +12,9 @@ import {
   CheckSquare, 
   Square,
   FileText,
-  FileX
+  FileX,
+  ChevronDown,
+  ChevronRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -31,6 +34,8 @@ interface TreeNode {
 }
 
 export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: FileTreeProps) {
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
+
   const tree = useMemo(() => {
     const root = new Map<string, TreeNode>();
 
@@ -80,72 +85,152 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
     };
   }, [files]);
 
-  const renderNode = (node: TreeNode, level = 0) => {
+  const toggleFolder = (path: string) => {
+    setExpandedFolders(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(path)) {
+        newSet.delete(path);
+      } else {
+        newSet.add(path);
+      }
+      return newSet;
+    });
+  };
+
+  const renderNode = (node: TreeNode, level = 0, index = 0) => {
     const isFile = !!node.file;
     const hasChildren = node.children.size > 0;
+    const isExpanded = expandedFolders.has(node.path);
 
     if (isFile) {
       const file = node.file!;
-      const index = node.index!;
+      const fileIndex = node.index!;
       
       return (
-        <div
+        <motion.div
           key={node.path}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: index * 0.02, duration: 0.3 }}
+          whileHover={{ 
+            backgroundColor: "hsl(var(--muted) / 0.5)",
+            scale: 1.005
+          }}
           className={cn(
-            'flex items-center gap-2 py-1 px-2 hover:bg-muted/50 rounded-sm',
+            'flex items-center gap-2 py-2 px-2 rounded-sm cursor-pointer transition-colors',
             !file.isText && 'opacity-50'
           )}
           style={{ paddingLeft: `${level * 16 + 8}px` }}
+          onClick={() => file.isText && onFileToggle(fileIndex)}
         >
-          <Checkbox
-            checked={file.isIncluded}
-            onCheckedChange={() => onFileToggle(index)}
-            disabled={!file.isText}
-          />
-          {file.isText ? (
-            <FileText className="h-4 w-4 text-blue-500" />
-          ) : (
-            <FileX className="h-4 w-4 text-muted-foreground" />
-          )}
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Checkbox
+              checked={file.isIncluded}
+              onCheckedChange={() => onFileToggle(fileIndex)}
+              disabled={!file.isText}
+            />
+          </motion.div>
+          <motion.div
+            animate={{ 
+              color: file.isText ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
+              scale: file.isIncluded ? 1.1 : 1
+            }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          >
+            {file.isText ? (
+              <FileText className="h-4 w-4" />
+            ) : (
+              <FileX className="h-4 w-4" />
+            )}
+          </motion.div>
           <span className={cn(
             'flex-1 text-sm',
             !file.isText && 'text-muted-foreground'
           )}>
             {node.name}
           </span>
-          <span className="text-xs text-muted-foreground">
+          <motion.span 
+            className="text-xs text-muted-foreground"
+            whileHover={{ scale: 1.05 }}
+          >
             {formatBytes(file.size)}
-          </span>
-        </div>
+          </motion.span>
+        </motion.div>
       );
     }
 
     return (
-      <div key={node.path}>
-        <div
-          className="flex items-center gap-2 py-1 px-2 hover:bg-muted/50 rounded-sm"
+      <motion.div key={node.path}>
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: index * 0.02, duration: 0.3 }}
+          whileHover={{ 
+            backgroundColor: "hsl(var(--muted) / 0.3)",
+            scale: 1.005
+          }}
+          className="flex items-center gap-2 py-2 px-2 rounded-sm cursor-pointer"
           style={{ paddingLeft: `${level * 16 + 8}px` }}
+          onClick={() => hasChildren && toggleFolder(node.path)}
         >
-          {hasChildren ? (
-            <FolderOpen className="h-4 w-4 text-yellow-600" />
-          ) : (
-            <Folder className="h-4 w-4 text-yellow-600" />
+          {hasChildren && (
+            <motion.div
+              animate={{ rotate: isExpanded ? 90 : 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            </motion.div>
           )}
+          <motion.div
+            animate={{ 
+              scale: isExpanded ? 1.1 : 1,
+              rotate: isExpanded ? 5 : 0
+            }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          >
+            {isExpanded ? (
+              <FolderOpen className="h-4 w-4 text-amber-500" />
+            ) : (
+              <Folder className="h-4 w-4 text-amber-600" />
+            )}
+          </motion.div>
           <span className="text-sm font-medium">{node.name}</span>
-        </div>
-        {hasChildren && (
-          <div>
-            {Array.from(node.children.values())
-              .sort((a, b) => {
-                // Folders first, then files
-                if (a.file && !b.file) return 1;
-                if (!a.file && b.file) return -1;
-                return a.name.localeCompare(b.name);
-              })
-              .map(child => renderNode(child, level + 1))}
-          </div>
-        )}
-      </div>
+          {hasChildren && (
+            <motion.span 
+              className="text-xs text-muted-foreground"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1 }}
+            >
+              {node.children.size} items
+            </motion.span>
+          )}
+        </motion.div>
+        <AnimatePresence>
+          {hasChildren && isExpanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              style={{ overflow: "hidden" }}
+            >
+              {Array.from(node.children.values())
+                .sort((a, b) => {
+                  // Folders first, then files
+                  if (a.file && !b.file) return 1;
+                  if (!a.file && b.file) return -1;
+                  return a.name.localeCompare(b.name);
+                })
+                .map((child, childIndex) => renderNode(child, level + 1, childIndex))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     );
   };
 
@@ -154,45 +239,86 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-4">
-      <div className="flex items-center justify-between">
+    <motion.div 
+      className="w-full max-w-4xl mx-auto space-y-4"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div 
+        className="flex items-center justify-between"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.4 }}
+      >
         <div className="space-y-1">
           <h3 className="text-lg font-semibold">Files to process</h3>
           <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">
-              {stats.included} of {stats.textFiles} text files selected ({formatBytes(stats.totalSize)})
-            </p>
+            <motion.p 
+              className="text-sm text-muted-foreground"
+              whileHover={{ scale: 1.02 }}
+            >
+              <motion.span
+                key={stats.included}
+                initial={{ scale: 1.2, color: "hsl(var(--primary))" }}
+                animate={{ scale: 1, color: "hsl(var(--muted-foreground))" }}
+                transition={{ duration: 0.3 }}
+              >
+                {stats.included}
+              </motion.span>
+              {' '}of {stats.textFiles} text files selected ({formatBytes(stats.totalSize)})
+            </motion.p>
             {stats.binaryFiles > 0 && (
-              <p className="text-xs text-muted-foreground">
+              <motion.p 
+                className="text-xs text-muted-foreground"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
                 {stats.binaryFiles} binary files excluded • Total text files: {formatBytes(stats.totalTextSize)}
-              </p>
+              </motion.p>
             )}
           </div>
         </div>
         
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onSelectAll}
-            className="gap-2"
-          >
-            <CheckSquare className="h-4 w-4" />
-            Select All
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onSelectNone}
-            className="gap-2"
-          >
-            <Square className="h-4 w-4" />
-            Select None
-          </Button>
-        </div>
-      </div>
+        <motion.div 
+          className="flex gap-2"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
+        >
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onSelectAll}
+              className="gap-2"
+            >
+              <CheckSquare className="h-4 w-4" />
+              Select All
+            </Button>
+          </motion.div>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onSelectNone}
+              className="gap-2"
+            >
+              <Square className="h-4 w-4" />
+              Select None
+            </Button>
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
-      <div className="border rounded-lg max-h-96 overflow-auto">
+      <motion.div 
+        className="border rounded-lg max-h-96 overflow-auto bg-card/50 backdrop-blur-sm"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+        whileHover={{ boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}
+      >
         <div className="p-2">
           {Array.from(tree.values())
             .sort((a, b) => {
@@ -201,9 +327,9 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
               if (!a.file && b.file) return -1;
               return a.name.localeCompare(b.name);
             })
-            .map(node => renderNode(node))}
+            .map((node, index) => renderNode(node, 0, index))}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 } 

@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useCallback, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { FileEntry, isTextFile, shouldIgnoreFile } from '@/lib/file-processor';
-import { FolderOpen, Upload } from 'lucide-react';
+import { FolderOpen, Upload, FileCode, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // Type definitions for File System Access API and webkit extensions
@@ -327,46 +328,164 @@ export function FilePicker({
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <div
+      <input
+        ref={fileInputRef}
+        type="file"
+        // @ts-ignore
+        webkitdirectory="true"
+        directory="true"
+        multiple
+        onChange={handleFileInputChange}
+        className="hidden"
+        aria-label="Select folder"
+      />
+      
+      <motion.div
         className={cn(
-          'border-2 border-dashed rounded-lg p-8 text-center transition-colors',
+          "relative border-2 border-dashed rounded-xl p-12 text-center transition-all duration-300",
           isDragOver
-            ? 'border-primary bg-primary/5'
-            : 'border-border hover:border-primary/50'
+            ? "border-primary bg-primary/5 scale-105"
+            : "border-border hover:border-primary/50 hover:bg-accent/50"
         )}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        layout
       >
-        <div className="flex flex-col items-center gap-4">
-          <div className="rounded-full bg-muted p-4">
-            <FolderOpen className="h-8 w-8 text-muted-foreground" />
-          </div>
-
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold">
-              Select a folder to squeeze
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              Drag and drop a folder here, or choose one from your computer
-            </p>
-          </div>
-
-          <Button onClick={handleChooseFolder} className="gap-2">
-            <Upload className="h-4 w-4" />
-            Choose Folder
-          </Button>
-
-          <input
-            ref={fileInputRef}
-            type="file"
-            {...({ webkitdirectory: 'true', directory: 'true' } as Record<string, string>)}
-            multiple
-            className="hidden"
-            onChange={handleFileInputChange}
-          />
-        </div>
-      </div>
+        <AnimatePresence mode="wait">
+          {isDragOver ? (
+            <motion.div
+              key="drag-over"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.2 }}
+              className="space-y-4"
+            >
+              <motion.div
+                animate={{ 
+                  rotate: [0, 10, -10, 0],
+                  scale: [1, 1.1, 1.1, 1]
+                }}
+                transition={{ 
+                  duration: 0.6,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center"
+              >
+                <Upload className="h-8 w-8 text-primary" />
+              </motion.div>
+              <div className="space-y-2">
+                <motion.h3 
+                  className="text-lg font-semibold text-primary"
+                  animate={{ opacity: [0.7, 1, 0.7] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  Drop your folder here!
+                </motion.h3>
+                <p className="text-sm text-muted-foreground">
+                  Release to select the folder
+                </p>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="default"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-6"
+            >
+              <motion.div 
+                className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center group"
+                whileHover={{ 
+                  scale: 1.1,
+                  backgroundColor: "hsl(var(--primary) / 0.15)"
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              >
+                <motion.div
+                  animate={{ 
+                    y: [0, -2, 0],
+                  }}
+                  transition={{ 
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
+                  <FolderOpen className="h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
+                </motion.div>
+              </motion.div>
+              
+              <div className="space-y-3">
+                <motion.h3 
+                  className="text-lg font-semibold"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.1 }}
+                >
+                  Select a folder to get started
+                </motion.h3>
+                <motion.p 
+                  className="text-sm text-muted-foreground max-w-md mx-auto"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  Choose a folder containing your codebase, or drag and drop it here
+                </motion.p>
+              </div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    onClick={handleChooseFolder}
+                    size="lg"
+                    className="gap-2 shadow-lg"
+                  >
+                    <FileCode className="h-4 w-4" />
+                    Choose Folder
+                  </Button>
+                </motion.div>
+              </motion.div>
+              
+              <motion.div 
+                className="flex items-center gap-2 text-xs text-muted-foreground"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                <Sparkles className="h-3 w-3" />
+                <span>
+                  Supports all programming languages and file types
+                </span>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        {/* Animated background elements */}
+        <motion.div
+          className="absolute inset-0 rounded-xl opacity-0 pointer-events-none"
+          animate={isDragOver ? {
+            opacity: 1,
+            background: "radial-gradient(circle at center, hsl(var(--primary) / 0.1) 0%, transparent 70%)"
+          } : { opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        />
+      </motion.div>
 
       <div className="mt-4 text-xs text-muted-foreground text-center space-y-2">
         <p>

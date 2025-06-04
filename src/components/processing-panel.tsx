@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { 
@@ -17,7 +18,9 @@ import {
   Download, 
   CheckCircle, 
   AlertTriangle,
-  Loader2
+  Loader2,
+  Sparkles,
+  Zap
 } from 'lucide-react';
 
 interface ProcessingPanelProps {
@@ -161,128 +164,345 @@ export function ProcessingPanel({ files }: ProcessingPanelProps) {
 
   if (includedFiles.length === 0) {
     return (
-      <div className="w-full max-w-2xl mx-auto text-center py-8">
-        <p className="text-muted-foreground">
-          No files selected for processing. Please select at least one text file.
-        </p>
-      </div>
+      <motion.div 
+        className="w-full max-w-2xl mx-auto text-center py-8"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.div
+          animate={{ 
+            y: [0, -5, 0],
+            opacity: [0.5, 1, 0.5]
+          }}
+          transition={{ 
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+            type: "tween"
+          }}
+        >
+          <p className="text-muted-foreground">
+            No files selected for processing. Please select at least one text file.
+          </p>
+        </motion.div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-6">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
+    <motion.div 
+      className="w-full max-w-4xl mx-auto space-y-6"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
+      <motion.div 
+        className="space-y-4"
+        layout
+      >
+        <motion.div 
+          className="flex items-center justify-between"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1, duration: 0.5 }}
+        >
           <div>
-            <h3 className="text-lg font-semibold">Process Files</h3>
-            <p className="text-sm text-muted-foreground">
-              Ready to process {includedFiles.length} files ({formatBytes(totalSize)})
-            </p>
+            <motion.h3 
+              className="text-lg font-semibold"
+              whileHover={{ scale: 1.02 }}
+            >
+              Process Files
+            </motion.h3>
+            <motion.p 
+              className="text-sm text-muted-foreground"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              Ready to process{' '}
+              <motion.span
+                key={includedFiles.length}
+                initial={{ scale: 1.2, color: "hsl(var(--primary))" }}
+                animate={{ scale: 1, color: "hsl(var(--muted-foreground))" }}
+                transition={{ duration: 0.3 }}
+              >
+                {includedFiles.length}
+              </motion.span>
+              {' '}files ({formatBytes(totalSize)})
+            </motion.p>
           </div>
           
-          <Button
-            onClick={handleProcess}
-            disabled={isProcessing || includedFiles.length === 0}
-            className="gap-2"
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            {isProcessing ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Play className="h-4 w-4" />
-            )}
-            {isProcessing ? 'Processing...' : 'Process Files'}
-          </Button>
-        </div>
-
-        {progress && (
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Processing: {progress.currentFile}</span>
-              <span>{Math.round((progress.current / progress.total) * 100)}%</span>
-            </div>
-            <Progress value={progress.current} max={progress.total} />
-          </div>
-        )}
-      </div>
-
-      {result && outputBlob && (
-        <div className="border rounded-lg p-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-green-500" />
-            <h4 className="font-semibold">Processing Complete</h4>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div>
-              <div className="font-medium">Files</div>
-              <div className="text-muted-foreground">{result.stats.totalFiles}</div>
-            </div>
-            <div>
-              <div className="font-medium">Size</div>
-              <div className="text-muted-foreground">{formatBytes(result.stats.totalSize)}</div>
-            </div>
-            <div>
-              <div className="font-medium">Lines</div>
-              <div className="text-muted-foreground">{result.stats.lineCount.toLocaleString()}</div>
-            </div>
-            <div>
-              <div className="font-medium">Est. Tokens</div>
-              <div className="text-muted-foreground">{result.stats.estimatedTokens.toLocaleString()}</div>
-            </div>
-          </div>
-
-          {outputBlob.size > clipboardLimits.warningSize && (
-            <div className="flex items-start gap-2 p-3 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-              <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
-              <div className="text-sm">
-                <div className="font-medium text-yellow-800 dark:text-yellow-200">Large content warning</div>
-                <div className="text-yellow-700 dark:text-yellow-300">
-                  Content is {formatBytes(outputBlob.size)}, which may be too large for clipboard on some browsers.
-                  Consider downloading instead.
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="flex gap-3">
             <Button
-              onClick={handleCopyToClipboard}
-              disabled={copyStatus === 'copying'}
-              variant={copyStatus === 'success' ? 'default' : 'outline'}
-              className="gap-2"
+              onClick={handleProcess}
+              disabled={isProcessing || includedFiles.length === 0}
+              className="gap-2 relative overflow-hidden"
+              size="lg"
             >
-              {copyStatus === 'copying' ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : copyStatus === 'success' ? (
-                <CheckCircle className="h-4 w-4" />
-              ) : (
-                <Copy className="h-4 w-4" />
+              <AnimatePresence mode="wait">
+                {isProcessing ? (
+                  <motion.div
+                    key="processing"
+                    initial={{ rotate: 0, scale: 0 }}
+                    animate={{ rotate: 360, scale: 1 }}
+                    exit={{ rotate: 0, scale: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="play"
+                    initial={{ scale: 0, rotate: -90 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    exit={{ scale: 0, rotate: 90 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Play className="h-4 w-4" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              {isProcessing ? 'Processing...' : 'Process Files'}
+              
+              {/* Animated background effect */}
+              {isProcessing && (
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20"
+                  animate={{ x: ['-100%', '100%'] }}
+                  transition={{ 
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "linear"
+                  }}
+                />
               )}
-              {copyStatus === 'copying' ? 'Copying...' : 
-               copyStatus === 'success' ? 'Copied!' : 'Copy to Clipboard'}
             </Button>
+          </motion.div>
+        </motion.div>
 
-            <Button
-              onClick={handleDownload}
-              variant="outline"
-              className="gap-2"
+        <AnimatePresence>
+          {progress && (
+            <motion.div 
+              className="space-y-2"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
             >
-              <Download className="h-4 w-4" />
-              Download .txt
-            </Button>
-          </div>
-
-          {copyStatus === 'error' && (
-            <p className="text-sm text-red-600 dark:text-red-400">
-              Failed to copy to clipboard. Please try downloading instead.
-            </p>
+              <div className="flex justify-between text-sm">
+                <motion.span
+                  key={progress.currentFile}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  Processing: {progress.currentFile}
+                </motion.span>
+                <motion.span
+                  animate={{ 
+                    scale: [1, 1.1, 1],
+                    color: ["hsl(var(--muted-foreground))", "hsl(var(--primary))", "hsl(var(--muted-foreground))"]
+                  }}
+                  transition={{ duration: 0.6 }}
+                >
+                  {progress.current} / {progress.total}
+                </motion.span>
+              </div>
+              <motion.div layout>
+                <Progress 
+                  value={(progress.current / progress.total) * 100} 
+                  className="h-2"
+                  showAnimation={true}
+                />
+              </motion.div>
+            </motion.div>
           )}
+        </AnimatePresence>
+      </motion.div>
 
-          <div className="text-xs text-muted-foreground">
-            SHA-256: {result.checksum}
-          </div>
-        </div>
+      <AnimatePresence>
+        {result && outputBlob && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: -20 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="border rounded-lg p-6 bg-card/50 backdrop-blur-sm"
+            whileHover={{ 
+              boxShadow: "0 8px 30px rgba(0,0,0,0.12)",
+              scale: 1.01
+            }}
+          >
+            <motion.div 
+              className="flex items-start gap-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <motion.div
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ 
+                  delay: 0.3,
+                  type: "spring",
+                  stiffness: 200,
+                  damping: 10
+                }}
+                className="flex-shrink-0 w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center"
+              >
+                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+              </motion.div>
+              
+              <div className="flex-1 space-y-4">
+                <div>
+                  <motion.h4 
+                    className="text-lg font-semibold"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    Processing Complete!
+                  </motion.h4>
+                  <motion.div 
+                    className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 text-sm"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    {[
+                      { label: "Files", value: result.stats.totalFiles },
+                      { label: "Lines", value: result.stats.lineCount.toLocaleString() },
+                      { label: "Size", value: formatBytes(result.stats.totalSize) },
+                      { label: "Est. Tokens", value: result.stats.estimatedTokens.toLocaleString() }
+                    ].map((stat, index) => (
+                      <motion.div
+                        key={stat.label}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.6 + index * 0.1 }}
+                        whileHover={{ scale: 1.05 }}
+                        className="text-center p-2 bg-muted/50 rounded"
+                      >
+                        <div className="font-semibold text-primary">{stat.value}</div>
+                        <div className="text-xs text-muted-foreground">{stat.label}</div>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </div>
+
+                <motion.div 
+                  className="flex flex-wrap gap-3"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 }}
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button
+                      onClick={handleCopyToClipboard}
+                      disabled={copyStatus === 'copying'}
+                      className="gap-2"
+                      data-copy-button
+                    >
+                      <AnimatePresence mode="wait">
+                        {copyStatus === 'copying' ? (
+                          <motion.div
+                            key="copying"
+                            initial={{ rotate: 0 }}
+                            animate={{ rotate: 360 }}
+                            exit={{ rotate: 0 }}
+                            transition={{ duration: 0.5 }}
+                          >
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          </motion.div>
+                        ) : copyStatus === 'success' ? (
+                          <motion.div
+                            key="success"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0 }}
+                            transition={{ type: "spring", stiffness: 500, damping: 15 }}
+                          >
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          </motion.div>
+                        ) : (
+                          <motion.div
+                            key="copy"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                      {copyStatus === 'copying' ? 'Copying...' : 
+                       copyStatus === 'success' ? 'Copied!' : 'Copy to Clipboard'}
+                    </Button>
+                  </motion.div>
+
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button
+                      onClick={handleDownload}
+                      variant="outline"
+                      className="gap-2"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download File
+                    </Button>
+                  </motion.div>
+                </motion.div>
+
+                {result.checksum && (
+                  <motion.div 
+                    className="text-xs text-muted-foreground font-mono bg-muted/30 p-2 rounded"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1 }}
+                  >
+                    SHA-256: {result.checksum}
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Clipboard size warning */}
+      {totalSize > clipboardLimits.warningSize && !result && (
+        <motion.div 
+          className="flex items-center gap-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg text-sm"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4 }}
+          whileHover={{ scale: 1.02 }}
+        >
+          <motion.div
+            animate={{ rotate: [0, 10, -10, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+          </motion.div>
+          <span className="text-yellow-800 dark:text-yellow-200">
+            Large codebase detected ({formatBytes(totalSize)}). 
+            Consider downloading the file instead of copying to clipboard.
+          </span>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 } 

@@ -389,8 +389,8 @@ export async function* processFiles(
     const entry = includedFiles[i];
 
     onProgress?.({
-      current: processedSize,
-      total: totalSize,
+      current: i + 1,
+      total: includedFiles.length,
       currentFile: entry.path,
     });
 
@@ -431,8 +431,8 @@ export async function* processFiles(
   }
 
   onProgress?.({
-    current: totalSize,
-    total: totalSize,
+    current: includedFiles.length,
+    total: includedFiles.length,
     currentFile: 'Complete',
   });
 
