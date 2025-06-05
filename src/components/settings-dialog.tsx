@@ -112,7 +112,7 @@ export function SettingsDialog({ ignorePatterns, onIgnorePatternsChange }: Setti
           <Settings className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto !bg-white !text-black dark:!bg-slate-900 dark:!text-white border-2 shadow-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5" />
