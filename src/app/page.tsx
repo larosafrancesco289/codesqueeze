@@ -8,7 +8,7 @@ import { ProcessingPanel } from '@/components/processing-panel';
 import { SettingsDialog } from '@/components/settings-dialog';
 import { FileEntry } from '@/lib/file-processor';
 import { Button } from '@/components/ui/button';
-import { Moon, Sun, Zap, Code, FileText, Download } from 'lucide-react';
+import { Moon, Sun, Zap, Code, FileText, Download, Github } from 'lucide-react';
 
 export default function Home() {
   const [files, setFiles] = useState<FileEntry[]>([]);
@@ -153,6 +153,16 @@ export default function Home() {
               ignorePatterns={ignorePatterns}
               onIgnorePatternsChange={handleIgnorePatternsChange}
             />
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => window.open('https://github.com/larosafrancesco289/codesqueeze', '_blank')}
+                aria-label="View source code on GitHub"
+              >
+                <Github className="h-4 w-4" />
+              </Button>
+            </motion.div>
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
               <Button
                 variant="ghost"

@@ -24,7 +24,7 @@ Transform your codebase into AI-ready format by concatenating all source files i
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/codesqueeze.git
+git clone https://github.com/larosafrancesco289/codesqueeze.git
 cd codesqueeze
 ```
 
