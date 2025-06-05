@@ -1,184 +1,110 @@
-# 🗜️ CodeSqueeze
+# CodeSqueeze
 
-**Squeeze your entire codebase into LLM-friendly format** - A modern web app that transforms folder-based codebases into single, well-structured text files perfect for AI analysis and assistance.
+Transform your codebase into AI-ready format by concatenating all source files into a single, well-structured text file perfect for AI analysis and assistance.
 
-## ✨ Features
+**Live Demo:** [https://codesqueeze.vercel.app](https://codesqueeze.vercel.app)
 
-- **📁 Smart Folder Selection** - Drag & drop or browse to select entire directories
-- **🔍 Intelligent Filtering** - Automatically excludes binary files, node_modules, and hidden files
-- **⚙️ Customizable Ignore Patterns** - Configure which files to ignore with wildcard support (*.log, test_*, etc.)
-- **🌳 Visual File Tree** - Interactive tree view with checkboxes for granular file selection
-- **⚡ Memory Efficient** - Streams large codebases without overwhelming browser memory
-- **📊 Progress Tracking** - Real-time progress bar with file-by-file processing status
-- **📋 Copy to Clipboard** - One-click copy with fallback for large content
-- **💾 Download Option** - Download as .txt file with SHA-256 checksum
-- **🌙 Dark Mode** - Modern UI with automatic dark/light mode switching
-- **⌨️ Keyboard Shortcuts** - ⌘+O (open folder), ⌘+Shift+C (copy result)
-- **🔒 Privacy First** - All processing happens locally, no server uploads
+## Features
 
-## 🛠️ Tech Stack
+- **Smart Filtering**: Automatically excludes binary files, `node_modules`, and other non-essential files
+- **Memory Efficient**: Streams large codebases without overwhelming browser memory
+- **Universal Support**: Works with all programming languages and file types
+- **Local Processing**: All processing happens locally in your browser - no files are uploaded to any server
+- **Export Options**: Copy to clipboard or download as `.txt` with SHA-256 checksum
+- **Customizable Ignore Patterns**: Configure which files and directories to exclude
 
-- **Frontend**: Next.js 15.3 + React 19 + TypeScript 5.8
-- **Styling**: Tailwind CSS v4 + shadcn/ui components
-- **Testing**: Vitest + Playwright + React Testing Library
-- **File Handling**: File System Access API + webkitdirectory fallback
-- **Build**: Turbopack-powered builds with ESLint 9 + Prettier
-
-## 🚀 Quick Start
+## Getting Started
 
 ### Prerequisites
 
-- Node.js 20+ or 22 LTS
-- Modern browser with File API support
+- Node.js 18 or later
+- npm or yarn package manager
 
 ### Installation
 
+1. Clone the repository:
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/codesqueeze.git
+git clone https://github.com/your-username/codesqueeze.git
 cd codesqueeze
+```
 
-# Install dependencies
+2. Install dependencies:
+```bash
 npm install
+```
 
-# Start development server
+3. Start the development server:
+```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-### Building for Production
+## Usage
 
-```bash
-# Build the application
-npm run build
+1. **Select a Folder**: Choose a folder containing your codebase or drag and drop it
+2. **Review Files**: The tool will automatically detect and list all text files
+3. **Configure Filters**: Use the settings to customize ignore patterns if needed
+4. **Generate Output**: Click to concatenate all files into a single structured format
+5. **Export**: Copy to clipboard or download the result
 
-# Start production server
-npm run start
+### Keyboard Shortcuts
+
+- `⌘+O` (Mac) / `Ctrl+O` (Windows/Linux): Choose folder
+- `⌘+Shift+C` (Mac) / `Ctrl+Shift+C` (Windows/Linux): Copy result
+
+## Development
+
+### Available Scripts
+
+- `npm run dev` - Start development server with Turbopack
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run test` - Run unit tests with Vitest
+- `npm run test:watch` - Run tests in watch mode
+- `npm run test:coverage` - Run tests with coverage report
+- `npm run test:e2e` - Run end-to-end tests with Playwright
+- `npm run format` - Format code with Prettier
+- `npm run type-check` - Run TypeScript type checking
+
+### Tech Stack
+
+- **Framework**: Next.js 15 with React 19
+- **Styling**: Tailwind CSS 4
+- **UI Components**: Radix UI primitives
+- **Animation**: Framer Motion
+- **Icons**: Lucide React
+- **Testing**: Vitest + Playwright
+- **Type Checking**: TypeScript
+- **Linting**: ESLint
+- **Formatting**: Prettier
+
+## Project Structure
+
+```
+src/
+├── app/          # Next.js app directory
+├── components/   # React components
+├── lib/          # Utility functions
+└── test/         # Test files
 ```
 
-## 📖 Usage
+## Contributing
 
-1. **Select a Folder**: Click "Choose Folder" or drag & drop a directory
-2. **Configure Settings**: Use the settings button (⚙️) to customize ignore patterns
-3. **Review Files**: Use the file tree to select/deselect specific files
-4. **Process**: Click "Process Files" to concatenate selected files
-5. **Export**: Copy to clipboard or download as .txt file
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature-name`
+3. Make your changes and add tests
+4. Run the test suite: `npm run test`
+5. Format your code: `npm run format`
+6. Commit your changes: `git commit -m 'Add feature'`
+7. Push to the branch: `git push origin feature-name`
+8. Submit a pull request
 
-### Ignore Patterns
+## Privacy & Security
 
-The settings dialog allows you to configure which files to ignore during processing:
+CodeSqueeze processes all files locally in your browser. No data is transmitted to external servers, ensuring your code remains private and secure.
 
-- **Common Patterns**: Pre-defined patterns for log files, test files, temporary files, etc.
-- **Custom Patterns**: Add your own patterns with wildcard support
-- **Examples**:
-  - `*.log` - matches all .log files
-  - `test_*` - matches files starting with "test_"
-  - `temp` - matches files/folders containing "temp"
-  - `.env` - matches exact filename ".env"
+## License
 
-### Output Format
-
-CodeSqueeze generates structured output with:
-
-```
-/* === CODEBASE INDEX === */
-/* Generated: 2025-01-20T10:30:00.000Z */
-/* Total Files: 15 */
-
-/* 1. src/index.ts (2.3 KB) */
-/* 2. src/components/App.tsx (4.1 KB) */
-...
-
-/* === END INDEX === */
-
-/* === BEGIN src/index.ts === */
-// Your file content here
-/* === END src/index.ts === */
-
-/* === BEGIN src/components/App.tsx === */
-// Your file content here
-/* === END src/components/App.tsx === */
-```
-
-## 🧪 Testing
-
-```bash
-# Run unit tests
-npm run test
-
-# Run tests with coverage
-npm run test:coverage
-
-# Run E2E tests
-npm run test:e2e
-
-# Type checking
-npm run type-check
-```
-
-## 🔧 Development
-
-```bash
-# Format code
-npm run format
-
-# Check formatting
-npm run format:check
-
-# Lint code
-npm run lint
-```
-
-### Git Hooks
-
-Pre-commit hooks automatically run linting and formatting via Husky + lint-staged.
-
-## 🌐 Browser Support
-
-- **Desktop**: Chrome 86+, Firefox 82+, Safari 14+, Edge 86+
-- **Mobile**: Chrome Android 132+, Safari iOS 14+
-
-### File System Access API Support
-
-- **Full support**: Chrome/Edge 86+, Opera 72+
-- **Fallback**: Uses `webkitdirectory` on unsupported browsers
-
-## ⚠️ Limitations
-
-- **Clipboard Size**: ~150KB safe limit (varies by browser)
-- **File Size**: Individual files >1MB excluded for performance
-- **Memory**: Designed for codebases up to ~100MB total
-
-## 🔐 Security & Privacy
-
-- **100% Client-Side**: No data leaves your browser
-- **No Analytics**: No tracking or telemetry
-- **Local Storage**: Only preferences (dark mode, ignore patterns)
-
-## 📋 Default Ignore Patterns
-
-CodeSqueeze automatically excludes:
-
-- `node_modules/`, `.git/`, `.next/`, `dist/`, `build/`
-- Hidden files (starting with `.`)
-- Binary files (images, videos, archives, fonts)
-- Files larger than 1MB
-
-## 🤝 Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
-
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) for details.
-
-## 🙏 Acknowledgments
-
-- [shadcn/ui](https://ui.shadcn.com/) for beautiful components
-- [Lucide React](https://lucide.dev/) for icons
-- [Radix UI](https://www.radix-ui.com/) for accessible primitives
-
----
-
-**Made with ❤️ for the AI development community**
+This project is licensed under the MIT License - see the LICENSE file for details. 

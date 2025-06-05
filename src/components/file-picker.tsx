@@ -2,9 +2,8 @@
 
 import React, { useCallback, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
 import { FileEntry, isTextFile, shouldIgnoreFile } from '@/lib/file-processor';
-import { FolderOpen, Upload, FileCode, Sparkles, Loader2 } from 'lucide-react';
+import { FolderOpen, Upload, Sparkles, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // Type definitions for File System Access API and webkit extensions
