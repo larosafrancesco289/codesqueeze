@@ -429,12 +429,12 @@ export function FilePicker({
       
       <motion.div
         className={cn(
-          "relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 cursor-pointer",
+          "relative border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 cursor-pointer",
           isProcessing
-            ? "border-muted bg-muted/20 cursor-not-allowed"
+            ? "border-border bg-muted/20 cursor-not-allowed"
             : isDragOver
-            ? "border-primary bg-primary/5 scale-105"
-            : "border-border hover:border-primary/50 hover:bg-accent/50"
+            ? "border-accent bg-accent/10 scale-105"
+            : "border-border hover:border-accent/60 hover:bg-muted"
         )}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -463,19 +463,19 @@ export function FilePicker({
                   repeat: Infinity,
                   ease: "linear"
                 }}
-                className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center"
+                className="mx-auto w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center"
               >
-                <Loader2 className="h-6 w-6 text-primary" />
+                <Loader2 className="h-6 w-6 text-accent" />
               </motion.div>
               <div className="space-y-1">
                 <motion.h3 
-                  className="text-base font-semibold text-primary"
+                  className="text-base font-semibold text-accent"
                   animate={{ opacity: [0.7, 1, 0.7] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
                   Processing folder...
                 </motion.h3>
-                <p className="text-xs text-muted-foreground max-w-md mx-auto">
+                <p className="text-xs text-fg-muted max-w-md mx-auto">
                   {processingStatus || 'Please wait while we read your files'}
                 </p>
               </div>
@@ -499,19 +499,19 @@ export function FilePicker({
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
-                className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center"
+                className="mx-auto w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center"
               >
-                <Upload className="h-6 w-6 text-primary" />
+                <Upload className="h-6 w-6 text-accent" />
               </motion.div>
               <div className="space-y-1">
                 <motion.h3 
-                  className="text-base font-semibold text-primary"
+                  className="text-base font-semibold text-accent"
                   animate={{ opacity: [0.7, 1, 0.7] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
                   Drop your folder here!
                 </motion.h3>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-fg-muted">
                   Release to select the folder
                 </p>
               </div>
@@ -526,10 +526,10 @@ export function FilePicker({
               className="space-y-4"
             >
               <motion.div 
-                className="mx-auto w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center group"
+                className="mx-auto w-14 h-14 bg-accent/10 rounded-full flex items-center justify-center group"
                 whileHover={{ 
                   scale: 1.1,
-                  backgroundColor: "hsl(var(--primary) / 0.15)"
+                  backgroundColor: "color-mix(in oklab, var(--color-accent) 15%, transparent)"
                 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
@@ -543,7 +543,7 @@ export function FilePicker({
                     ease: "easeInOut"
                   }}
                 >
-                  <FolderOpen className="h-7 w-7 text-primary group-hover:scale-110 transition-transform" />
+                  <FolderOpen className="h-7 w-7 text-accent group-hover:scale-110 transition-transform" />
                 </motion.div>
               </motion.div>
               
@@ -557,7 +557,7 @@ export function FilePicker({
                   Select a folder to get started
                 </motion.h3>
                 <motion.p 
-                  className="text-xs text-muted-foreground max-w-md mx-auto"
+                  className="text-xs text-fg-muted max-w-md mx-auto"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
@@ -567,7 +567,7 @@ export function FilePicker({
               </div>
               
               <motion.div 
-                className="flex items-center justify-center gap-1 text-xs text-muted-foreground"
+                className="flex items-center justify-center gap-1 text-xs text-fg-muted"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
@@ -583,22 +583,22 @@ export function FilePicker({
         
         {/* Animated background elements */}
         <motion.div
-          className="absolute inset-0 rounded-xl opacity-0 pointer-events-none"
+          className="absolute inset-0 rounded-2xl opacity-0 pointer-events-none"
           animate={isDragOver ? {
             opacity: 1,
-            background: "radial-gradient(circle at center, hsl(var(--primary) / 0.1) 0%, transparent 70%)"
+            background: "radial-gradient(circle at center, color-mix(in oklab, var(--color-accent) 10%, transparent) 0%, transparent 70%)"
           } : { opacity: 0 }}
           transition={{ duration: 0.3 }}
         />
       </motion.div>
 
-      <div className="mt-2 text-xs text-muted-foreground text-center space-y-1 max-w-lg mx-auto">
+      <div className="mt-2 text-xs text-fg-muted text-center space-y-1 max-w-lg mx-auto">
         <p>
           Only text files will be processed. Binary files, node_modules, and
           hidden files are excluded by default.
         </p>
         {ignorePatterns.length > 0 && (
-          <p className="text-orange-600 dark:text-orange-400">
+          <p className="text-orange-700 dark:text-orange-300">
             {ignorePatterns.length} custom ignore pattern{ignorePatterns.length !== 1 ? 's' : ''} active. 
             Click settings to manage patterns.
           </p>

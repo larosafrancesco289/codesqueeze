@@ -25,13 +25,13 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
       >
         <motion.div
           className={cn(
-            "h-full bg-gradient-to-r from-primary via-primary/90 to-primary transition-all duration-500 ease-out relative",
+            "h-full bg-gradient-to-r from-accent via-accent/90 to-accent transition-all duration-500 ease-out relative",
             showAnimation && percentage > 0 && percentage < 100 && "progress-enhanced"
           )}
           initial={{ width: 0 }}
           animate={{ 
             width: `${percentage}%`,
-            boxShadow: percentage > 0 ? "0 0 10px hsl(var(--primary) / 0.5)" : "none"
+            boxShadow: percentage > 0 ? "0 0 10px color-mix(in oklab, var(--color-accent) 50%, transparent)" : "none"
           }}
           transition={{ 
             duration: 0.5, 
@@ -41,7 +41,7 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
           {/* Shimmer effect for active progress */}
           {showAnimation && percentage > 0 && percentage < 100 && (
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-[color:color-mix(in_oklab,var(--color-accent)_20%,transparent)] to-transparent"
               animate={{ x: ['-100%', '100%'] }}
               transition={{ 
                 duration: 1.5, 

@@ -112,7 +112,7 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: index * 0.02, duration: 0.3 }}
           whileHover={{ 
-            backgroundColor: "hsl(var(--muted) / 0.5)",
+            backgroundColor: "color-mix(in oklab, var(--color-muted) 50%, transparent)",
             scale: 1.005
           }}
           className={cn(
@@ -135,7 +135,7 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
           </motion.div>
           <motion.div
             animate={{ 
-              color: file.isText ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
+              color: file.isText ? "var(--color-accent)" : "var(--color-fg-muted)",
               scale: file.isIncluded ? 1.1 : 1
             }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -148,12 +148,12 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
           </motion.div>
           <span className={cn(
             'flex-1 text-sm',
-            !file.isText && 'text-muted-foreground'
+            !file.isText && 'text-fg-muted'
           )}>
             {node.name}
           </span>
           <motion.span 
-            className="text-xs text-muted-foreground"
+            className="text-xs text-fg-muted"
             whileHover={{ scale: 1.05 }}
           >
             {formatBytes(file.size)}
@@ -169,7 +169,7 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: index * 0.02, duration: 0.3 }}
           whileHover={{ 
-            backgroundColor: "hsl(var(--muted) / 0.3)",
+            backgroundColor: "color-mix(in oklab, var(--color-muted) 30%, transparent)",
             scale: 1.005
           }}
           className="flex items-center gap-2 py-2 px-2 rounded-sm cursor-pointer"
@@ -181,7 +181,7 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
               animate={{ rotate: isExpanded ? 90 : 0 }}
               transition={{ duration: 0.2 }}
             >
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              <ChevronRight className="h-4 w-4 text-fg-muted" />
             </motion.div>
           )}
           <motion.div
@@ -192,15 +192,15 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
             {isExpanded ? (
-              <FolderOpen className="h-4 w-4 text-amber-500" />
+              <FolderOpen className="h-4 w-4 text-accent" />
             ) : (
-              <Folder className="h-4 w-4 text-amber-600" />
+              <Folder className="h-4 w-4 text-accent" />
             )}
           </motion.div>
           <span className="text-sm font-medium">{node.name}</span>
           {hasChildren && (
             <motion.span 
-              className="text-xs text-muted-foreground"
+              className="text-xs text-fg-muted"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.1 }}
@@ -254,13 +254,13 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
           <h3 className="text-lg font-semibold">Files to process</h3>
           <div className="space-y-1">
             <motion.p 
-              className="text-sm text-muted-foreground"
+              className="text-sm text-fg-muted"
               whileHover={{ scale: 1.02 }}
             >
               <motion.span
                 key={stats.included}
-                initial={{ scale: 1.2, color: "hsl(var(--primary))" }}
-                animate={{ scale: 1, color: "hsl(var(--muted-foreground))" }}
+                initial={{ scale: 1.2, color: "var(--color-accent)" }}
+                animate={{ scale: 1, color: "var(--color-fg-muted)" }}
                 transition={{ duration: 0.3 }}
               >
                 {stats.included}
@@ -269,7 +269,7 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
             </motion.p>
             {stats.binaryFiles > 0 && (
               <motion.p 
-                className="text-xs text-muted-foreground"
+                className="text-xs text-fg-muted"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
@@ -312,7 +312,7 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
       </motion.div>
 
       <motion.div 
-        className="border rounded-lg max-h-96 overflow-auto bg-card/50 backdrop-blur-sm"
+        className="border border-border rounded-2xl max-h-96 overflow-auto bg-surface/50 backdrop-blur-sm shadow-[var(--shadow-card)]"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.3, duration: 0.5 }}

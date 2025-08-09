@@ -101,12 +101,12 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-canvas text-fg">
       <motion.header 
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="border-b border-border backdrop-blur-sm bg-background/95"
+        className="border-b border-border backdrop-blur-sm bg-surface/95"
       >
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <motion.div 
@@ -127,9 +127,9 @@ export default function Home() {
                   ease: "easeInOut"
                 }}
               >
-                <Zap className="h-6 w-6 text-primary" />
+                <Zap className="h-6 w-6 text-accent" />
               </motion.div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              <h1 className="text-xl font-bold bg-gradient-to-r from-fg to-fg/70 bg-clip-text text-transparent">
                 CodeSqueeze
               </h1>
             </div>
@@ -137,7 +137,7 @@ export default function Home() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3, duration: 0.5 }}
-              className="hidden md:block text-sm text-muted-foreground"
+              className="hidden md:block text-sm text-fg-muted"
             >
               Squeeze your codebase into LLM-friendly format
             </motion.div>
@@ -171,7 +171,7 @@ export default function Home() {
                 aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
               >
                 <AnimatePresence mode="wait">
-                  {darkMode ? (
+                  {!darkMode ? (
                     <motion.div
                       key="sun"
                       initial={{ rotate: -90, opacity: 0 }}
@@ -217,7 +217,7 @@ export default function Home() {
                 className="space-y-2"
               >
                 <motion.h2 
-                  className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent"
+                  className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-fg via-fg/80 to-fg/60 bg-clip-text text-transparent"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.3, duration: 0.6 }}
@@ -225,7 +225,7 @@ export default function Home() {
                   Transform your codebase into AI-ready format
                 </motion.h2>
                 <motion.p 
-                  className="text-sm text-muted-foreground max-w-xl mx-auto"
+                  className="text-sm text-fg-muted max-w-xl mx-auto"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5, duration: 0.6 }}
@@ -255,17 +255,17 @@ export default function Home() {
               >
                 {[
                   {
-                    icon: <Code className="h-4 w-4 text-primary" />,
+                    icon: <Code className="h-4 w-4 text-accent" />,
                     title: "Smart Filtering",
                     description: "Automatically excludes binary files, node_modules, and other non-essential files. Use settings to customize ignore patterns."
                   },
                   {
-                    icon: <FileText className="h-4 w-4 text-primary" />,
+                    icon: <FileText className="h-4 w-4 text-accent" />,
                     title: "Memory Efficient",
                     description: "Streams large codebases without overwhelming your browser memory"
                   },
                   {
-                    icon: <Download className="h-4 w-4 text-primary" />,
+                    icon: <Download className="h-4 w-4 text-accent" />,
                     title: "Export Options",
                     description: "Copy to clipboard or download as .txt with SHA-256 checksum"
                   }
@@ -279,13 +279,13 @@ export default function Home() {
                       scale: 1.02,
                       boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
                     }}
-                    className="space-y-2 p-3 rounded-lg border border-border/50 bg-card/50 backdrop-blur-sm transition-colors hover:bg-card text-center"
+                    className="space-y-2 p-3 rounded-2xl border border-border bg-surface/50 backdrop-blur-sm transition-colors hover:bg-surface text-center shadow-[var(--shadow-card)]"
                   >
                     <div className="flex flex-col items-center gap-1">
                       {feature.icon}
                       <h3 className="font-medium text-xs">{feature.title}</h3>
                     </div>
-                    <p className="text-muted-foreground text-xs leading-snug">
+                    <p className="text-fg-muted text-xs leading-snug">
                       {feature.description}
                     </p>
                   </motion.div>
@@ -305,11 +305,11 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1, duration: 0.5 }}
-                className="flex items-center justify-between"
+                 className="flex items-center justify-between"
               >
                 <div>
                   <h2 className="text-2xl font-bold">Selected Files</h2>
-                  <p className="text-muted-foreground">
+                  <p className="text-fg-muted">
                     Review and select files to include in your codebase export
                     {ignorePatterns.length > 0 && (
                       <span className="ml-2 text-sm">
@@ -328,7 +328,7 @@ export default function Home() {
                     ignorePatterns={ignorePatterns}
                     onIgnorePatternsChange={handleIgnorePatternsChange}
                   />
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                     <Button
                       variant="outline"
                       onClick={() => setFiles([])}
@@ -369,9 +369,9 @@ export default function Home() {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2, duration: 0.6 }}
-        className="border-t border-border mt-16"
+         className="border-t border-border mt-16"
       >
-        <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
+        <div className="container mx-auto px-4 py-6 text-center text-sm text-fg-muted">
           <p>
             All processing happens locally in your browser. No files are uploaded to any server.
           </p>

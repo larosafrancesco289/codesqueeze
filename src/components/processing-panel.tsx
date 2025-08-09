@@ -180,7 +180,7 @@ export function ProcessingPanel({ files }: ProcessingPanelProps) {
             type: "tween"
           }}
         >
-          <p className="text-muted-foreground">
+          <p className="text-fg-muted">
             No files selected for processing. Please select at least one text file.
           </p>
         </motion.div>
@@ -213,7 +213,7 @@ export function ProcessingPanel({ files }: ProcessingPanelProps) {
               Process Files
             </motion.h3>
             <motion.p 
-              className="text-sm text-muted-foreground"
+              className="text-sm text-fg-muted"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
@@ -221,8 +221,8 @@ export function ProcessingPanel({ files }: ProcessingPanelProps) {
               Ready to process{' '}
               <motion.span
                 key={includedFiles.length}
-                initial={{ scale: 1.2, color: "hsl(var(--primary))" }}
-                animate={{ scale: 1, color: "hsl(var(--muted-foreground))" }}
+                initial={{ scale: 1.2, color: "var(--color-accent)" }}
+                animate={{ scale: 1, color: "var(--color-fg-muted)" }}
                 transition={{ duration: 0.3 }}
               >
                 {includedFiles.length}
@@ -272,7 +272,7 @@ export function ProcessingPanel({ files }: ProcessingPanelProps) {
               {/* Animated background effect */}
               {isProcessing && (
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20"
+                  className="absolute inset-0 bg-gradient-to-r from-accent/20 via-accent/10 to-accent/20"
                   animate={{ x: ['-100%', '100%'] }}
                   transition={{ 
                     duration: 1.5,
@@ -306,7 +306,7 @@ export function ProcessingPanel({ files }: ProcessingPanelProps) {
                 <motion.span
                   animate={{ 
                     scale: [1, 1.1, 1],
-                    color: ["hsl(var(--muted-foreground))", "hsl(var(--primary))", "hsl(var(--muted-foreground))"]
+                    color: ["var(--color-fg-muted)", "var(--color-accent)", "var(--color-fg-muted)"]
                   }}
                   transition={{ duration: 0.6 }}
                 >
@@ -332,7 +332,7 @@ export function ProcessingPanel({ files }: ProcessingPanelProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -20 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="border rounded-lg p-6 bg-card/50 backdrop-blur-sm"
+            className="border border-border rounded-2xl p-6 bg-surface/50 backdrop-blur-sm shadow-[var(--shadow-card)]"
             whileHover={{ 
               boxShadow: "0 8px 30px rgba(0,0,0,0.12)",
               scale: 1.01
@@ -353,9 +353,9 @@ export function ProcessingPanel({ files }: ProcessingPanelProps) {
                   stiffness: 200,
                   damping: 10
                 }}
-                className="flex-shrink-0 w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center"
+                className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center bg-[color:color-mix(in_oklab,var(--color-accent)_20%,transparent)]"
               >
-                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                <CheckCircle className="h-5 w-5 text-accent" />
               </motion.div>
               
               <div className="flex-1 space-y-4">
@@ -386,10 +386,10 @@ export function ProcessingPanel({ files }: ProcessingPanelProps) {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.6 + index * 0.1 }}
                         whileHover={{ scale: 1.05 }}
-                        className="text-center p-2 bg-muted/50 rounded"
+                        className="text-center p-2 bg-muted/50 rounded-2xl"
                       >
-                        <div className="font-semibold text-primary">{stat.value}</div>
-                        <div className="text-xs text-muted-foreground">{stat.label}</div>
+                        <div className="font-semibold text-accent">{stat.value}</div>
+                        <div className="text-xs text-fg-muted">{stat.label}</div>
                       </motion.div>
                     ))}
                   </motion.div>
@@ -430,7 +430,7 @@ export function ProcessingPanel({ files }: ProcessingPanelProps) {
                             exit={{ scale: 0 }}
                             transition={{ type: "spring", stiffness: 500, damping: 15 }}
                           >
-                            <CheckCircle className="h-4 w-4 text-green-500" />
+                            <CheckCircle className="h-4 w-4 text-accent" />
                           </motion.div>
                         ) : (
                           <motion.div
@@ -466,7 +466,7 @@ export function ProcessingPanel({ files }: ProcessingPanelProps) {
 
                 {result.checksum && (
                   <motion.div 
-                    className="text-xs text-muted-foreground font-mono bg-muted/30 p-2 rounded"
+                    className="text-xs text-fg-muted font-mono bg-muted/30 p-2 rounded-2xl"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1 }}
@@ -483,7 +483,7 @@ export function ProcessingPanel({ files }: ProcessingPanelProps) {
       {/* Clipboard size warning */}
       {totalSize > clipboardLimits.warningSize && !result && (
         <motion.div 
-          className="flex items-center gap-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg text-sm"
+          className="flex items-center gap-2 p-3 bg-[color:color-mix(in_oklab,#fde68a_25%,transparent)] dark:bg-[color:color-mix(in_oklab,#fde68a_15%,transparent)] border border-[color:#f59e0b]/30 rounded-2xl text-sm"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
@@ -495,7 +495,7 @@ export function ProcessingPanel({ files }: ProcessingPanelProps) {
           >
             <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
           </motion.div>
-          <span className="text-yellow-800 dark:text-yellow-200">
+          <span className="text-[color:#92400e] dark:text-[color:#fcd34d]">
             Large codebase detected ({formatBytes(totalSize)}). 
             Consider downloading the file instead of copying to clipboard.
           </span>

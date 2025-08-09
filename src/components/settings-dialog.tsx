@@ -112,7 +112,7 @@ export function SettingsDialog({ ignorePatterns, onIgnorePatternsChange }: Setti
           <Settings className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto !bg-white !text-black dark:!bg-slate-900 dark:!text-white border-2 shadow-2xl">
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto bg-surface text-fg border border-border shadow-[var(--shadow-card)] rounded-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5" />
@@ -126,10 +126,10 @@ export function SettingsDialog({ ignorePatterns, onIgnorePatternsChange }: Setti
 
         <div className="space-y-6">
           {/* Info box */}
-          <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+          <div className="bg-[color:color-mix(in_oklab,#60a5fa_12%,transparent)] border border-[color:#60a5fa]/30 rounded-2xl p-4">
             <div className="flex items-start gap-3">
-              <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-              <div className="text-sm text-blue-800 dark:text-blue-200">
+              <Info className="h-5 w-5 text-[color:#60a5fa] mt-0.5 flex-shrink-0" />
+              <div className="text-sm">
                 <p className="font-medium mb-1">Pattern examples:</p>
                 <ul className="space-y-1 text-xs">
                   <li><code>*.log</code> - matches all .log files</li>
@@ -156,7 +156,7 @@ export function SettingsDialog({ ignorePatterns, onIgnorePatternsChange }: Setti
               </Button>
             </div>
             
-            <div className="grid grid-cols-1 gap-3 max-h-60 overflow-y-auto border rounded-lg p-4">
+            <div className="grid grid-cols-1 gap-3 max-h-60 overflow-y-auto border border-border rounded-2xl p-4 bg-muted/30">
               {COMMON_IGNORE_PATTERNS.map(({ pattern, label, description }) => {
                 const isSelected = selectedCommonPatterns.has(pattern);
                 return (
@@ -173,7 +173,7 @@ export function SettingsDialog({ ignorePatterns, onIgnorePatternsChange }: Setti
                       >
                         {label}
                       </label>
-                      <p className="text-xs text-muted-foreground mt-1">{description}</p>
+                      <p className="text-xs text-fg-muted mt-1">{description}</p>
                     </div>
                   </div>
                 );
@@ -200,16 +200,16 @@ export function SettingsDialog({ ignorePatterns, onIgnorePatternsChange }: Setti
 
             {customPatterns.length > 0 && (
               <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">Your custom patterns:</p>
+                <p className="text-sm text-fg-muted">Your custom patterns:</p>
                 <div className="space-y-2">
                   {customPatterns.map((pattern) => (
-                    <div key={pattern} className="flex items-center justify-between bg-muted/50 rounded-lg px-3 py-2">
+                    <div key={pattern} className="flex items-center justify-between bg-muted/50 rounded-2xl px-3 py-2 border border-border">
                       <code className="text-sm font-mono">{pattern}</code>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => removePattern(pattern)}
-                        className="gap-1 text-destructive hover:text-destructive"
+                        className="gap-1"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -221,7 +221,7 @@ export function SettingsDialog({ ignorePatterns, onIgnorePatternsChange }: Setti
           </div>
 
           {/* Current count */}
-          <div className="text-sm text-muted-foreground border-t pt-4">
+          <div className="text-sm text-fg-muted border-t border-border pt-4">
             <p>
               Currently ignoring <strong>{ignorePatterns.length}</strong> pattern{ignorePatterns.length !== 1 ? "\u2019s" : ""}
               {ignorePatterns.length > 0 && (
