@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import React, { useMemo, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
-import { FileEntry } from '@/lib/file-processor';
-import { formatBytes } from '@/lib/utils';
-import { 
-  Folder, 
-  FolderOpen, 
-  CheckSquare, 
+import React, { useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { FileEntry } from "@/lib/file-processor";
+import { formatBytes } from "@/lib/utils";
+import {
+  Folder,
+  FolderOpen,
+  CheckSquare,
   Square,
   FileText,
   FileX,
-  ChevronRight
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+  ChevronRight,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface FileTreeProps {
   files: FileEntry[];
@@ -32,20 +32,27 @@ interface TreeNode {
   index?: number;
 }
 
-export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: FileTreeProps) {
-  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
+export function FileTree({
+  files,
+  onFileToggle,
+  onSelectAll,
+  onSelectNone,
+}: FileTreeProps) {
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(
+    new Set(),
+  );
 
   const tree = useMemo(() => {
     const root = new Map<string, TreeNode>();
 
     files.forEach((file, index) => {
-      const parts = file.path.split('/').filter(Boolean);
+      const parts = file.path.split("/").filter(Boolean);
       let current = root;
-      let currentPath = '';
+      let currentPath = "";
 
       parts.forEach((part, i) => {
         currentPath = currentPath ? `${currentPath}/${part}` : part;
-        
+
         if (!current.has(part)) {
           current.set(part, {
             name: part,
@@ -55,7 +62,7 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
         }
 
         const node = current.get(part)!;
-        
+
         // If this is the last part, it's a file
         if (i === parts.length - 1) {
           node.file = file;
@@ -70,10 +77,10 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
   }, [files]);
 
   const stats = useMemo(() => {
-    const included = files.filter(f => f.isIncluded);
-    const textFiles = files.filter(f => f.isText);
-    const binaryFiles = files.filter(f => !f.isText);
-    
+    const included = files.filter((f) => f.isIncluded);
+    const textFiles = files.filter((f) => f.isText);
+    const binaryFiles = files.filter((f) => !f.isText);
+
     return {
       total: files.length,
       textFiles: textFiles.length,
@@ -85,7 +92,7 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
   }, [files]);
 
   const toggleFolder = (path: string) => {
-    setExpandedFolders(prev => {
+    setExpandedFolders((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(path)) {
         newSet.delete(path);
@@ -104,20 +111,21 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
     if (isFile) {
       const file = node.file!;
       const fileIndex = node.index!;
-      
+
       return (
         <motion.div
           key={node.path}
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: index * 0.02, duration: 0.3 }}
-          whileHover={{ 
-            backgroundColor: "color-mix(in oklab, var(--color-muted) 50%, transparent)",
-            scale: 1.005
+          whileHover={{
+            backgroundColor:
+              "color-mix(in oklab, var(--color-muted) 50%, transparent)",
+            scale: 1.005,
           }}
           className={cn(
-            'flex items-center gap-2 py-2 px-2 rounded-sm cursor-pointer transition-colors',
-            !file.isText && 'opacity-50'
+            "flex items-center gap-2 py-2 px-2 rounded-sm cursor-pointer transition-colors",
+            !file.isText && "opacity-50",
           )}
           style={{ paddingLeft: `${level * 16 + 8}px` }}
           onClick={() => file.isText && onFileToggle(fileIndex)}
@@ -134,9 +142,11 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
             />
           </motion.div>
           <motion.div
-            animate={{ 
-              color: file.isText ? "var(--color-accent)" : "var(--color-fg-muted)",
-              scale: file.isIncluded ? 1.1 : 1
+            animate={{
+              color: file.isText
+                ? "var(--color-accent)"
+                : "var(--color-fg-muted)",
+              scale: file.isIncluded ? 1.1 : 1,
             }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
@@ -146,13 +156,12 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
               <FileX className="h-4 w-4" />
             )}
           </motion.div>
-          <span className={cn(
-            'flex-1 text-sm',
-            !file.isText && 'text-fg-muted'
-          )}>
+          <span
+            className={cn("flex-1 text-sm", !file.isText && "text-fg-muted")}
+          >
             {node.name}
           </span>
-          <motion.span 
+          <motion.span
             className="text-xs text-fg-muted"
             whileHover={{ scale: 1.05 }}
           >
@@ -168,9 +177,10 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: index * 0.02, duration: 0.3 }}
-          whileHover={{ 
-            backgroundColor: "color-mix(in oklab, var(--color-muted) 30%, transparent)",
-            scale: 1.005
+          whileHover={{
+            backgroundColor:
+              "color-mix(in oklab, var(--color-muted) 30%, transparent)",
+            scale: 1.005,
           }}
           className="flex items-center gap-2 py-2 px-2 rounded-sm cursor-pointer"
           style={{ paddingLeft: `${level * 16 + 8}px` }}
@@ -185,9 +195,9 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
             </motion.div>
           )}
           <motion.div
-            animate={{ 
+            animate={{
               scale: isExpanded ? 1.1 : 1,
-              rotate: isExpanded ? 5 : 0
+              rotate: isExpanded ? 5 : 0,
             }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
@@ -199,7 +209,7 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
           </motion.div>
           <span className="text-sm font-medium">{node.name}</span>
           {hasChildren && (
-            <motion.span 
+            <motion.span
               className="text-xs text-fg-muted"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -225,7 +235,9 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
                   if (!a.file && b.file) return -1;
                   return a.name.localeCompare(b.name);
                 })
-                .map((child, childIndex) => renderNode(child, level + 1, childIndex))}
+                .map((child, childIndex) =>
+                  renderNode(child, level + 1, childIndex),
+                )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -238,13 +250,13 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
   }
 
   return (
-    <motion.div 
+    <motion.div
       className="w-full max-w-4xl mx-auto space-y-4"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <motion.div 
+      <motion.div
         className="flex items-center justify-between"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -253,7 +265,7 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
         <div className="space-y-1">
           <h3 className="text-lg font-semibold">Files to process</h3>
           <div className="space-y-1">
-            <motion.p 
+            <motion.p
               className="text-sm text-fg-muted"
               whileHover={{ scale: 1.02 }}
             >
@@ -264,23 +276,25 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
                 transition={{ duration: 0.3 }}
               >
                 {stats.included}
-              </motion.span>
-              {' '}of {stats.textFiles} text files selected ({formatBytes(stats.totalSize)})
+              </motion.span>{" "}
+              of {stats.textFiles} text files selected (
+              {formatBytes(stats.totalSize)})
             </motion.p>
             {stats.binaryFiles > 0 && (
-              <motion.p 
+              <motion.p
                 className="text-xs text-fg-muted"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
               >
-                {stats.binaryFiles} binary files excluded • Total text files: {formatBytes(stats.totalTextSize)}
+                {stats.binaryFiles} binary files excluded • Total text files:{" "}
+                {formatBytes(stats.totalTextSize)}
               </motion.p>
             )}
           </div>
         </div>
-        
-        <motion.div 
+
+        <motion.div
           className="flex gap-2"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -311,7 +325,7 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
         </motion.div>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         className="border border-border rounded-2xl max-h-96 overflow-auto bg-surface/50 backdrop-blur-sm shadow-[var(--shadow-card)]"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -331,4 +345,4 @@ export function FileTree({ files, onFileToggle, onSelectAll, onSelectNone }: Fil
       </motion.div>
     </motion.div>
   );
-} 
+}

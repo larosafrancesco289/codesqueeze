@@ -3,26 +3,32 @@
 /* --- Francesco Design Tokens (Tailwind v4 @theme) --- */
 @theme {
   /* Fonts */
-  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-sans:
+    Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-mono:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
 
   /* Radius + shadows */
   --radius-2xl: 16px;
-  --shadow-card: 0 10px 25px rgba(0,0,0,.10);
+  --shadow-card: 0 10px 25px rgba(0, 0, 0, 0.1);
 
   /* -------- Imperial Archive (LIGHT) -------- */
-  --color-canvas: #f4f1ec;   /* page background */
-  --color-surface: #fdfbf8;  /* cards/panels */
-  --color-muted: #f1ede7;    /* subtle surfaces */
-  --color-fg: #1E1C18;       /* body text */
-  --color-fg-muted: #5B534B; /* secondary text */
-  --color-accent: #B9975B;   /* gold */
-  --color-accent-2: #6D2A8A; /* imperial purple */
-  --color-border: #d5cfc4;   /* strokes/dividers */
+  --color-canvas: #f4f1ec; /* page background */
+  --color-surface: #fdfbf8; /* cards/panels */
+  --color-muted: #f1ede7; /* subtle surfaces */
+  --color-fg: #1e1c18; /* body text */
+  --color-fg-muted: #5b534b; /* secondary text */
+  --color-accent: #b9975b; /* gold */
+  --color-accent-2: #6d2a8a; /* imperial purple */
+  --color-border: #d5cfc4; /* strokes/dividers */
 }
 
 /* Inform the browser which palette to optimize for */
-:root { color-scheme: light; }
+:root {
+  color-scheme: light;
+}
 
 /* -------- Deep Court (DARK) overrides -------- */
 .dark {
@@ -31,13 +37,13 @@
   --color-canvas: #08070a;
   --color-surface: #121017;
   --color-muted: #17131e;
-  --color-fg: #F1EFEF;
-  --color-fg-muted: #C8C3D1;
-  --color-accent: #D4AF37;
-  --color-accent-2: #5B2C6F;
-  --color-border: #2E2533;
+  --color-fg: #f1efef;
+  --color-fg-muted: #c8c3d1;
+  --color-accent: #d4af37;
+  --color-accent-2: #5b2c6f;
+  --color-border: #2e2533;
 
-  --shadow-card: 0 8px 24px rgba(0,0,0,.45);
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 
 /* Optional component primitives */
@@ -46,26 +52,69 @@
 }
 
 /* Example base styles (keep minimal) */
-html, body { height: 100%; }
-body { @apply bg-canvas text-fg font-sans; }
+html,
+body {
+  height: 100%;
+}
+body {
+  @apply bg-canvas text-fg font-sans;
+}
 
 /* Keep utility animations/effects but map to new tokens */
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
 
 /* Smooth transitions for interactive elements */
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Custom animations */
-@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-6px); } }
-@keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-accent) 40%, transparent); } 50% { box-shadow: 0 0 0 10px transparent; } }
-@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0
+      color-mix(in oklab, var(--color-accent) 40%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 10px transparent;
+  }
+}
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
 
-.float-animation { animation: float 3s ease-in-out infinite; }
-.pulse-glow { animation: pulse-glow 2s infinite; }
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+.pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
 .shimmer {
-  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--color-accent) 10%, transparent), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--color-accent) 10%, transparent),
+    transparent
+  );
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
 }
@@ -78,33 +127,60 @@ button, input, select, textarea {
 }
 
 /* Improved button hover sheen */
-.btn-hover { position: relative; overflow: hidden; }
+.btn-hover {
+  position: relative;
+  overflow: hidden;
+}
 .btn-hover::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   left: -100%;
-  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--color-accent) 10%, transparent), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--color-accent) 10%, transparent),
+    transparent
+  );
   transition: left 0.5s;
 }
-.btn-hover:hover::before { left: 100%; }
+.btn-hover:hover::before {
+  left: 100%;
+}
 
 /* Elevated card hover */
-.card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -3px color-mix(in oklab, var(--color-fg) 10%, transparent), 0 4px 6px -2px color-mix(in oklab, var(--color-fg) 5%, transparent);
+  box-shadow:
+    0 10px 25px -3px color-mix(in oklab, var(--color-fg) 10%, transparent),
+    0 4px 6px -2px color-mix(in oklab, var(--color-fg) 5%, transparent);
 }
 
 /* Loading animation */
-@keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-.animate-spin-slow { animation: spin-slow 3s linear infinite; }
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
 
 /* Progress bar enhancements */
-.progress-enhanced { position: relative; overflow: hidden; }
+.progress-enhanced {
+  position: relative;
+  overflow: hidden;
+}
 .progress-enhanced::after {
-  content: '';
-  position: absolute; inset: 0;
+  content: "";
+  position: absolute;
+  inset: 0;
   background-image: linear-gradient(
     -45deg,
     transparent 25%,
@@ -118,4 +194,11 @@ button, input, select, textarea {
   background-size: 15px 15px;
   animation: progress-stripes 1s linear infinite;
 }
-@keyframes progress-stripes { 0% { background-position: 0 0; } 100% { background-position: 15px 0; } }
+@keyframes progress-stripes {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 15px 0;
+  }
+}

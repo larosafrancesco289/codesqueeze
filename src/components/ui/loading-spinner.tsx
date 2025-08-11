@@ -1,33 +1,36 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { motion } from "framer-motion"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface LoadingSpinnerProps {
-  size?: "sm" | "md" | "lg"
-  className?: string
+  size?: "sm" | "md" | "lg";
+  className?: string;
 }
 
 const sizeClasses = {
   sm: "h-4 w-4",
-  md: "h-6 w-6", 
-  lg: "h-8 w-8"
-}
+  md: "h-6 w-6",
+  lg: "h-8 w-8",
+};
 
-export function LoadingSpinner({ size = "md", className }: LoadingSpinnerProps) {
+export function LoadingSpinner({
+  size = "md",
+  className,
+}: LoadingSpinnerProps) {
   return (
     <motion.div
       className={cn(
         "relative flex items-center justify-center",
         sizeClasses[size],
-        className
+        className,
       )}
       animate={{ rotate: 360 }}
       transition={{
         duration: 1,
         repeat: Infinity,
-        ease: "linear"
+        ease: "linear",
       }}
     >
       <motion.div className="absolute inset-0 border-2 border-accent/20 rounded-full" />
@@ -37,7 +40,7 @@ export function LoadingSpinner({ size = "md", className }: LoadingSpinnerProps) 
         transition={{
           duration: 0.8,
           repeat: Infinity,
-          ease: "linear"
+          ease: "linear",
         }}
       />
       <motion.div
@@ -46,11 +49,11 @@ export function LoadingSpinner({ size = "md", className }: LoadingSpinnerProps) 
         transition={{
           duration: 1.2,
           repeat: Infinity,
-          ease: "linear"
+          ease: "linear",
         }}
       />
     </motion.div>
-  )
+  );
 }
 
 export function PulsingDots({ className }: { className?: string }) {
@@ -73,5 +76,5 @@ export function PulsingDots({ className }: { className?: string }) {
         />
       ))}
     </div>
-  )
-} 
+  );
+}

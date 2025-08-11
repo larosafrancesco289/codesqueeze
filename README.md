@@ -1,110 +1,84 @@
 # CodeSqueeze
 
-Transform your codebase into AI-ready format by concatenating all source files into a single, well-structured text file perfect for AI analysis and assistance.
+A small web app that concatenates a codebase into a single, structured text file for AI usage, processed entirely in the browser.
 
-**Live Demo:** [https://codesqueeze.vercel.app](https://codesqueeze.vercel.app)
+Live site: [https://codesqueeze.vercel.app](https://codesqueeze.vercel.app)
+
+## Why
+
+Sharing a repo with an AI often needs one compact text file. CodeSqueeze scans folders, filters out noise, and streams a readable bundle with file boundaries and a checksum.
 
 ## Features
 
-- **Smart Filtering**: Automatically excludes binary files, `node_modules`, and other non-essential files
-- **Memory Efficient**: Streams large codebases without overwhelming browser memory
-- **Universal Support**: Works with all programming languages and file types
-- **Local Processing**: All processing happens locally in your browser - no files are uploaded to any server
-- **Export Options**: Copy to clipboard or download as `.txt` with SHA-256 checksum
-- **Customizable Ignore Patterns**: Configure which files and directories to exclude
+- **Local processing**: Runs in the browser; no uploads
+- **Smart filtering**: Skips binaries, `node_modules`, build outputs, and hidden system files
+- **Ignore patterns**: Add custom patterns with wildcard support
+- **Memory-aware**: Streams large folders in batches
+- **Export options**: Copy to clipboard or download `.txt` with SHA-256
+- **Stats**: File count, line count, estimated tokens, total size
 
-## Getting Started
+## Setup
 
-### Prerequisites
+Prerequisites
 
-- Node.js 18 or later
-- npm or yarn package manager
+- Node.js 18+
+- npm
 
-### Installation
+Install
 
-1. Clone the repository:
 ```bash
 git clone https://github.com/larosafrancesco289/codesqueeze.git
 cd codesqueeze
-```
-
-2. Install dependencies:
-```bash
 npm install
 ```
 
-3. Start the development server:
+## Quickstart
+
 ```bash
-npm run dev
+npm run dev      # start dev server
+npm run build    # build for production
+npm run start    # start production server
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+Quality
+
+```bash
+npm run lint         # lint
+npm run format       # format with Prettier
+npm run type-check   # TypeScript check
+npm run test         # unit tests (Vitest)
+npm run test:e2e     # e2e tests (Playwright)
+```
 
 ## Usage
 
-1. **Select a Folder**: Choose a folder containing your codebase or drag and drop it
-2. **Review Files**: The tool will automatically detect and list all text files
-3. **Configure Filters**: Use the settings to customize ignore patterns if needed
-4. **Generate Output**: Click to concatenate all files into a single structured format
-5. **Export**: Copy to clipboard or download the result
+1. Open the app and choose a folder (or drag and drop).
+2. Review detected files and adjust selections.
+3. Add ignore patterns if needed.
+4. Process the files and copy or download the result.
 
-### Keyboard Shortcuts
+Keyboard shortcuts
 
-- `⌘+O` (Mac) / `Ctrl+O` (Windows/Linux): Choose folder
-- `⌘+Shift+C` (Mac) / `Ctrl+Shift+C` (Windows/Linux): Copy result
+- `Cmd+O` / `Ctrl+O`: choose folder
+- `Cmd+Shift+C` / `Ctrl+Shift+C`: copy result
 
-## Development
+## Architecture
 
-### Available Scripts
+- `src/app` Next.js entry, layout, and page
+- `src/components` UI and feature components
+- `src/lib` file scanning, processing, utils, and clipboard helpers
+- `src/test` test setup
 
-- `npm run dev` - Start development server with Turbopack
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run test` - Run unit tests with Vitest
-- `npm run test:watch` - Run tests in watch mode
-- `npm run test:coverage` - Run tests with coverage report
-- `npm run test:e2e` - Run end-to-end tests with Playwright
-- `npm run format` - Format code with Prettier
-- `npm run type-check` - Run TypeScript type checking
-
-### Tech Stack
-
-- **Framework**: Next.js 15 with React 19
-- **Styling**: Tailwind CSS 4
-- **UI Components**: Radix UI primitives
-- **Animation**: Framer Motion
-- **Icons**: Lucide React
-- **Testing**: Vitest + Playwright
-- **Type Checking**: TypeScript
-- **Linting**: ESLint
-- **Formatting**: Prettier
-
-## Project Structure
+Code tree
 
 ```
 src/
-├── app/          # Next.js app directory
-├── components/   # React components
-├── lib/          # Utility functions
-└── test/         # Test files
+  app/
+  components/
+  lib/
+  test/
 ```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Make your changes and add tests
-4. Run the test suite: `npm run test`
-5. Format your code: `npm run format`
-6. Commit your changes: `git commit -m 'Add feature'`
-7. Push to the branch: `git push origin feature-name`
-8. Submit a pull request
-
-## Privacy & Security
-
-CodeSqueeze processes all files locally in your browser. No data is transmitted to external servers, ensuring your code remains private and secure.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+MIT. See `LICENSE`.

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,12 +33,15 @@ export const metadata: Metadata = {
     "React",
     "TypeScript",
   ],
-  authors: [{ name: "Francesco La Rosa", url: "https://codesqueeze.vercel.app" }],
+  authors: [
+    { name: "Francesco La Rosa", url: "https://codesqueeze.vercel.app" },
+  ],
   metadataBase: new URL("https://codesqueeze.vercel.app"),
 
   openGraph: {
     title: "CodeSqueeze | Transform Your Codebase for AI",
-    description: "Concatenate your source files into a single, AI-ready text file. Processed locally for privacy.",
+    description:
+      "Concatenate your source files into a single, AI-ready text file. Processed locally for privacy.",
     url: "https://codesqueeze.vercel.app",
     siteName: "CodeSqueeze",
     images: [
@@ -54,7 +57,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "CodeSqueeze | Transform Your Codebase for AI",
-    description: "Turn your entire codebase into a single file for LLMs. Fast, private, and all in your browser.",
+    description:
+      "Turn your entire codebase into a single file for LLMs. Fast, private, and all in your browser.",
     images: ["/og-image.png"], // Recommended: Create this image
   },
 };
