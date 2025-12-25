@@ -11,8 +11,8 @@
     "url": "https://github.com/larosafrancesco289/codesqueeze/issues"
   },
   "scripts": {
-    "setup": "npm ci || npm install",
-    "ci": "npm run lint && npm run type-check && npm run test && npm run build",
+    "setup": "bun install",
+    "ci": "bun run lint && bun run type-check && bun run test && bun run build",
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",

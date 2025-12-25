@@ -3,10 +3,9 @@
 import React, { useCallback, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileEntry, isTextFile, shouldIgnoreFile } from "@/lib/file-processor";
-import { FolderOpen, Upload, Sparkles, Loader2 } from "lucide-react";
+import { FolderOpen, Upload, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Type definitions for File System Access API and webkit extensions
 type WebkitFile = File & {
   webkitRelativePath?: string;
 };
@@ -18,7 +17,7 @@ interface WebkitFileEntry {
   fullPath: string;
   file(
     successCallback: (file: File) => void,
-    errorCallback?: (error: DOMException) => void,
+    errorCallback?: (error: DOMException) => void
   ): void;
 }
 
@@ -33,9 +32,9 @@ interface WebkitDirectoryEntry {
 interface WebkitDirectoryReader {
   readEntries(
     successCallback: (
-      entries: (WebkitFileEntry | WebkitDirectoryEntry)[],
+      entries: (WebkitFileEntry | WebkitDirectoryEntry)[]
     ) => void,
-    errorCallback?: (error: DOMException) => void,
+    errorCallback?: (error: DOMException) => void
   ): void;
 }
 
@@ -63,10 +62,9 @@ export function FilePicker({
   const [processingStatus, setProcessingStatus] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Helper function to ensure UI updates
   const forceUIUpdate = useCallback(async () => {
     await new Promise((resolve) =>
-      requestAnimationFrame(() => resolve(undefined)),
+      requestAnimationFrame(() => resolve(undefined))
     );
     await new Promise((resolve) => setTimeout(resolve, 0));
   }, []);
@@ -74,84 +72,56 @@ export function FilePicker({
   const processFileList = useCallback(
     async (fileList: FileList) => {
       const files: FileEntry[] = [];
-      const batchSize = 20; // Process files in smaller batches
+      const batchSize = 20;
 
-      console.log(`Processing ${fileList.length} files from folder selection`);
-      setProcessingStatus(`Processing ${fileList.length} files...`);
-
-      // Force UI update using requestAnimationFrame
+      setProcessingStatus(`Scanning ${fileList.length} files...`);
       await forceUIUpdate();
       await new Promise((resolve) => setTimeout(resolve, 50));
 
       for (let i = 0; i < fileList.length; i++) {
         const file = fileList[i] as WebkitFile;
-
-        // Get relative path from webkitRelativePath or use name
         const path = file.webkitRelativePath || file.name;
 
-        console.log(
-          `File ${i}: ${file.name}, Path: ${path}, Size: ${file.size}, Type: ${file.type}`,
-        );
-
-        // Skip if this is a directory entry (size 0 and no type, no extension)
         if (file.size === 0 && file.type === "" && !file.name.includes(".")) {
-          console.log(`Skipping directory entry: ${path}`);
           continue;
         }
 
-        // Skip ignored files
         if (shouldIgnoreFile(path, ignorePatterns)) {
-          console.log(`Ignoring file: ${path}`);
           continue;
         }
 
         const isText = isTextFile(file);
-        console.log(
-          `File ${path} is text: ${isText}, size: ${file.size}, type: ${file.type}`,
-        );
 
         files.push({
           path,
           file,
           size: file.size,
-          isIncluded: isText, // Include text files by default
+          isIncluded: isText,
           isText,
         });
 
-        // Yield control more frequently
         if (i % batchSize === 0) {
-          setProcessingStatus(`Processing files... (${i}/${fileList.length})`);
+          setProcessingStatus(`Processing ${i}/${fileList.length} files...`);
           await new Promise((resolve) =>
-            requestAnimationFrame(() => resolve(undefined)),
+            requestAnimationFrame(() => resolve(undefined))
           );
           await new Promise((resolve) => setTimeout(resolve, 5));
         }
       }
 
-      console.log(
-        `Final file count: ${files.length}, Text files: ${files.filter((f) => f.isText).length}`,
-      );
-
-      setProcessingStatus("Sorting files...");
+      setProcessingStatus("Organizing files...");
       await new Promise((resolve) =>
-        requestAnimationFrame(() => resolve(undefined)),
+        requestAnimationFrame(() => resolve(undefined))
       );
       await new Promise((resolve) => setTimeout(resolve, 50));
 
-      // Sort files by path
       files.sort((a, b) => a.path.localeCompare(b.path));
-
-      setProcessingStatus("Finalizing...");
-      await new Promise((resolve) =>
-        requestAnimationFrame(() => resolve(undefined)),
-      );
-      await new Promise((resolve) => setTimeout(resolve, 50));
 
       onFilesSelected(files);
       setIsProcessing(false);
       setProcessingStatus("");
     },
-    [onFilesSelected, ignorePatterns, forceUIUpdate],
+    [onFilesSelected, ignorePatterns, forceUIUpdate]
   );
 
   const handleDragOver = useCallback(
@@ -161,7 +131,7 @@ export function FilePicker({
         setIsDragOver(true);
       }
     },
-    [isProcessing],
+    [isProcessing]
   );
 
   const handleDragLeave = useCallback(
@@ -171,7 +141,7 @@ export function FilePicker({
         setIsDragOver(false);
       }
     },
-    [isProcessing],
+    [isProcessing]
   );
 
   const readDirectoryRecursively = useCallback(
@@ -199,43 +169,43 @@ export function FilePicker({
                       (entry as WebkitFileEntry).file(
                         (file: File) => {
                           Object.defineProperty(file, "webkitRelativePath", {
-                            value: entry.fullPath.substring(1), // Remove leading slash
+                            value: entry.fullPath.substring(1),
                             writable: false,
                           });
                           collectedFiles.push(file);
                           fileCount++;
                           if (fileCount % 10 === 0) {
                             setProcessingStatus(
-                              `Reading files... (${collectedFiles.length} found)`,
+                              `Reading files... (${collectedFiles.length} found)`
                             );
                           }
                           fileResolve();
                         },
                         (err: DOMException) => {
                           console.error(
-                            `[readDirectoryRecursively] Error getting file object for ${entry.name}:`,
-                            err,
+                            `Error getting file object for ${entry.name}:`,
+                            err
                           );
                           fileReject(err);
-                        },
+                        }
                       );
-                    },
+                    }
                   );
                   batchPromises.push(filePromise);
                 } else if (entry.isDirectory) {
                   const subdirPromise = readDirectoryRecursively(
-                    entry as WebkitDirectoryEntry,
+                    entry as WebkitDirectoryEntry
                   )
                     .then((subFiles) => {
                       collectedFiles.push(...subFiles);
                       setProcessingStatus(
-                        `Reading files... (${collectedFiles.length} found)`,
+                        `Reading files... (${collectedFiles.length} found)`
                       );
                     })
                     .catch((dirError) => {
                       console.error(
-                        `[readDirectoryRecursively] Error recursing into directory ${entry.name}:`,
-                        dirError,
+                        `Error recursing into directory ${entry.name}:`,
+                        dirError
                       );
                     });
                   batchPromises.push(subdirPromise);
@@ -244,9 +214,8 @@ export function FilePicker({
 
               try {
                 await Promise.all(batchPromises);
-                // Allow UI to update between batches
                 await new Promise((resolve) =>
-                  requestAnimationFrame(() => resolve(undefined)),
+                  requestAnimationFrame(() => resolve(undefined))
                 );
                 await new Promise((resolve) => setTimeout(resolve, 20));
                 readEntries();
@@ -256,18 +225,18 @@ export function FilePicker({
             },
             (err: DOMException) => {
               console.error(
-                `[readDirectoryRecursively] reader.readEntries error for ${dirEntry.name}:`,
-                err,
+                `reader.readEntries error for ${dirEntry.name}:`,
+                err
               );
               reject(err);
-            },
+            }
           );
         };
 
         readEntries();
       });
     },
-    [],
+    []
   );
 
   const handleDrop = useCallback(
@@ -280,65 +249,49 @@ export function FilePicker({
       const items = e.dataTransfer.items;
       if (!items) return;
 
-      console.log(`Dropped ${items.length} items`);
       setIsProcessing(true);
       setProcessingStatus("Reading dropped folder...");
 
-      // Defer heavy processing to next event loop tick
       setTimeout(async () => {
         try {
-          // Additional delay to ensure UI has updated
           await new Promise((resolve) => setTimeout(resolve, 50));
 
           const allFiles: File[] = [];
 
           for (let i = 0; i < items.length; i++) {
             const item = items[i] as WebkitDataTransferItem;
-            console.log(`Drop item ${i}:`, {
-              kind: item.kind,
-              type: item.type,
-            });
 
             if (item.kind === "file") {
-              // Try to get directory entry if available
               const entry = item.webkitGetAsEntry?.() || item.getAsEntry?.();
 
               if (entry && entry.isDirectory) {
-                console.log(`Reading directory: ${entry.name}`);
                 try {
                   const dirFiles = await readDirectoryRecursively(
-                    entry as WebkitDirectoryEntry,
+                    entry as WebkitDirectoryEntry
                   );
                   allFiles.push(...dirFiles);
-                  console.log(
-                    `Found ${dirFiles.length} files in directory ${entry.name}`,
-                  );
                 } catch (error) {
                   console.warn("Failed to read directory contents:", error);
                   setIsProcessing(false);
                   setProcessingStatus("");
                   alert(
-                    `Failed to read directory contents. Please use the "Choose Folder" button instead.`,
+                    `Failed to read directory contents. Please use the "Choose Folder" button instead.`
                   );
                   return;
                 }
               } else if (entry && entry.isFile) {
-                // Handle individual file
                 (entry as WebkitFileEntry).file((file: File) => {
                   allFiles.push(file);
                 });
               } else {
-                // Fallback for browsers that don't support directory entries
                 const file = item.getAsFile();
                 if (file) allFiles.push(file);
               }
             }
           }
 
-          // Wait a bit for all file operations to complete
           setTimeout(async () => {
             if (allFiles.length > 0) {
-              console.log(`Processing ${allFiles.length} dropped files`);
               const fileList = new DataTransfer();
               allFiles.forEach((file) => fileList.items.add(file));
               try {
@@ -348,15 +301,14 @@ export function FilePicker({
                 setIsProcessing(false);
                 setProcessingStatus("");
                 alert(
-                  "An error occurred while processing the files. Please try again.",
+                  "An error occurred while processing the files. Please try again."
                 );
               }
             } else {
-              console.log("No files found in drop");
               setIsProcessing(false);
               setProcessingStatus("");
               alert(
-                'Please use the "Choose Folder" button for better folder selection support.',
+                'Please use the "Choose Folder" button for better folder selection support.'
               );
             }
           }, 500);
@@ -365,66 +317,35 @@ export function FilePicker({
           setIsProcessing(false);
           setProcessingStatus("");
           alert(
-            'Error processing dropped folder. Please use the "Choose Folder" button instead.',
+            'Error processing dropped folder. Please use the "Choose Folder" button instead.'
           );
         }
       }, 0);
     },
-    [processFileList, readDirectoryRecursively, isProcessing],
+    [processFileList, readDirectoryRecursively, isProcessing]
   );
 
   const handleFileInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files;
-      console.log("File input change event:", {
-        filesCount: files?.length || 0,
-        webkitdirectory: (e.target as WebkitHTMLInputElement).webkitdirectory,
-        multiple: e.target.multiple,
-        inputValue: e.target.value,
-      });
 
       if (files && files.length > 0) {
-        // Set processing state immediately
         setIsProcessing(true);
         setProcessingStatus("Reading selected folder...");
 
-        // Defer heavy processing to next event loop tick to allow UI to update
         setTimeout(async () => {
           try {
-            // Additional delay to ensure UI has updated
             await new Promise((resolve) => setTimeout(resolve, 50));
 
-            // Log all files to understand the structure
-            console.log("All files received:");
-            for (let i = 0; i < files.length; i++) {
-              const file = files[i] as WebkitFile;
-              console.log(`  File ${i}:`, {
-                name: file.name,
-                webkitRelativePath: file.webkitRelativePath,
-                size: file.size,
-                type: file.type,
-                lastModified: file.lastModified,
-              });
-            }
-
-            // Check if we got actual files or just directories
             const actualFiles = Array.from(files).filter((file) => {
-              // Filter out directory entries
               return !(file.size === 0 && file.type === "");
             });
 
-            console.log(
-              `Filtered to ${actualFiles.length} actual files from ${files.length} entries`,
-            );
-
             if (actualFiles.length === 0) {
-              console.warn(
-                "No actual files found in selection - this might be a browser compatibility issue",
-              );
               setIsProcessing(false);
               setProcessingStatus("");
               alert(
-                "No files were found in the selected folder. This might be a browser compatibility issue. Please try selecting a different folder or use a different browser.",
+                "No files were found in the selected folder. This might be a browser compatibility issue. Please try selecting a different folder or use a different browser."
               );
               return;
             }
@@ -435,15 +356,13 @@ export function FilePicker({
             setIsProcessing(false);
             setProcessingStatus("");
             alert(
-              "An error occurred while processing the files. Please try again.",
+              "An error occurred while processing the files. Please try again."
             );
           }
         }, 0);
-      } else {
-        console.log("No files selected");
       }
     },
-    [processFileList],
+    [processFileList]
   );
 
   const handleChooseFolder = useCallback(() => {
@@ -451,30 +370,20 @@ export function FilePicker({
 
     if (fileInputRef.current) {
       const input = fileInputRef.current as WebkitHTMLInputElement;
-      // Reset and ensure directory attributes are set correctly
       input.value = "";
       input.webkitdirectory = true;
       input.directory = true;
       input.multiple = true;
-
-      console.log("Input element attributes before click:", {
-        webkitdirectory: input.webkitdirectory,
-        directory: input.directory,
-        multiple: input.multiple,
-        type: input.type,
-        value: input.value,
-      });
-
       input.click();
     }
   }, [isProcessing]);
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full">
       <input
         ref={fileInputRef}
         type="file"
-        // @ts-expect-error webkitdirectory is not part of the standard HTML input attributes but is needed for directory selection in webkit browsers
+        // @ts-expect-error webkitdirectory is not part of standard HTML attributes
         webkitdirectory="true"
         directory="true"
         multiple
@@ -485,187 +394,104 @@ export function FilePicker({
 
       <motion.div
         className={cn(
-          "relative border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 cursor-pointer",
-          isProcessing
-            ? "border-border bg-muted/20 cursor-not-allowed"
-            : isDragOver
-              ? "border-accent bg-accent/10 scale-105"
-              : "border-border hover:border-accent/60 hover:bg-muted",
+          "drop-zone rounded-2xl cursor-pointer overflow-hidden",
+          isDragOver && "active",
+          isProcessing && "cursor-not-allowed opacity-80"
         )}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={!isProcessing ? handleChooseFolder : undefined}
-        whileHover={!isProcessing ? { scale: 1.02 } : {}}
-        whileTap={!isProcessing ? { scale: 0.98 } : {}}
-        layout
+        whileHover={!isProcessing ? { scale: 1.005 } : {}}
+        whileTap={!isProcessing ? { scale: 0.995 } : {}}
       >
-        <AnimatePresence mode="wait">
-          {isProcessing ? (
-            <motion.div
-              key="processing"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.2 }}
-              className="space-y-3"
-            >
+        <div className="p-8 sm:p-10">
+          <AnimatePresence mode="wait">
+            {isProcessing ? (
               <motion.div
-                animate={{
-                  rotate: 360,
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-                className="mx-auto w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center"
+                key="processing"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="flex flex-col items-center gap-4"
               >
-                <Loader2 className="h-6 w-6 text-accent" />
+                <div className="relative">
+                  <motion.div
+                    className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center"
+                    animate={{ rotate: 360 }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                  >
+                    <Loader2 className="h-6 w-6 text-accent" />
+                  </motion.div>
+                </div>
+                <div className="text-center space-y-1">
+                  <p className="font-medium text-fg">Processing folder...</p>
+                  <p className="text-sm text-fg-muted">{processingStatus}</p>
+                </div>
               </motion.div>
-              <div className="space-y-1">
-                <motion.h3
-                  className="text-base font-semibold text-accent"
-                  animate={{ opacity: [0.7, 1, 0.7] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  Processing folder...
-                </motion.h3>
-                <p className="text-xs text-fg-muted max-w-md mx-auto">
-                  {processingStatus || "Please wait while we read your files"}
-                </p>
-              </div>
-            </motion.div>
-          ) : isDragOver ? (
-            <motion.div
-              key="drag-over"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.2 }}
-              className="space-y-3"
-            >
+            ) : isDragOver ? (
               <motion.div
-                animate={{
-                  rotate: [0, 10, -10, 0],
-                  scale: [1, 1.1, 1.1, 1],
-                }}
-                transition={{
-                  duration: 0.6,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="mx-auto w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center"
-              >
-                <Upload className="h-6 w-6 text-accent" />
-              </motion.div>
-              <div className="space-y-1">
-                <motion.h3
-                  className="text-base font-semibold text-accent"
-                  animate={{ opacity: [0.7, 1, 0.7] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  Drop your folder here!
-                </motion.h3>
-                <p className="text-xs text-fg-muted">
-                  Release to select the folder
-                </p>
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="default"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-4"
-            >
-              <motion.div
-                className="mx-auto w-14 h-14 bg-accent/10 rounded-full flex items-center justify-center group"
-                whileHover={{
-                  scale: 1.1,
-                  backgroundColor:
-                    "color-mix(in oklab, var(--color-accent) 15%, transparent)",
-                }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                key="drag-over"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="flex flex-col items-center gap-4"
               >
                 <motion.div
-                  animate={{
-                    y: [0, -2, 0],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
+                  className="w-14 h-14 rounded-xl bg-accent/15 flex items-center justify-center"
+                  animate={{ y: [0, -4, 0] }}
+                  transition={{ duration: 0.6, repeat: Infinity }}
                 >
-                  <FolderOpen className="h-7 w-7 text-accent group-hover:scale-110 transition-transform" />
+                  <Upload className="h-6 w-6 text-accent" />
                 </motion.div>
+                <div className="text-center space-y-1">
+                  <p className="font-medium text-accent">Drop your folder here</p>
+                  <p className="text-sm text-fg-muted">Release to start processing</p>
+                </div>
               </motion.div>
-
-              <div className="space-y-2">
-                <motion.h3
-                  className="text-base font-semibold"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.1 }}
-                >
-                  Select a folder to get started
-                </motion.h3>
-                <motion.p
-                  className="text-xs text-fg-muted max-w-md mx-auto"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  Choose a folder containing your codebase, or drag and drop it
-                  here
-                </motion.p>
-              </div>
-
+            ) : (
               <motion.div
-                className="flex items-center justify-center gap-1 text-xs text-fg-muted"
+                key="default"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
+                exit={{ opacity: 0 }}
+                className="flex flex-col items-center gap-4"
               >
-                <Sparkles className="h-3 w-3" />
-                <span>Supports all programming languages and file types</span>
+                <motion.div
+                  className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <FolderOpen className="h-6 w-6 text-accent" />
+                </motion.div>
+                <div className="text-center space-y-1">
+                  <p className="font-medium text-fg">
+                    Drop a folder here or{" "}
+                    <span className="text-accent">click to browse</span>
+                  </p>
+                  <p className="text-sm text-fg-muted">
+                    Binary files and node_modules are automatically excluded
+                  </p>
+                </div>
               </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Animated background elements */}
-        <motion.div
-          className="absolute inset-0 rounded-2xl opacity-0 pointer-events-none"
-          animate={
-            isDragOver
-              ? {
-                  opacity: 1,
-                  background:
-                    "radial-gradient(circle at center, color-mix(in oklab, var(--color-accent) 10%, transparent) 0%, transparent 70%)",
-                }
-              : { opacity: 0 }
-          }
-          transition={{ duration: 0.3 }}
-        />
+            )}
+          </AnimatePresence>
+        </div>
       </motion.div>
 
-      <div className="mt-2 text-xs text-fg-muted text-center space-y-1 max-w-lg mx-auto">
-        <p>
-          Only text files will be processed. Binary files, node_modules, and
-          hidden files are excluded by default.
-        </p>
-        {ignorePatterns.length > 0 && (
-          <p className="text-orange-700 dark:text-orange-300">
-            {ignorePatterns.length} custom ignore pattern
-            {ignorePatterns.length !== 1 ? "s" : ""} active. Click settings to
-            manage patterns.
-          </p>
-        )}
-      </div>
+      {ignorePatterns.length > 0 && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-xs text-accent mt-3 text-center"
+        >
+          {ignorePatterns.length} custom ignore pattern
+          {ignorePatterns.length !== 1 ? "s" : ""} active
+        </motion.p>
+      )}
     </div>
   );
 }

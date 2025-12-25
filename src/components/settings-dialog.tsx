@@ -203,11 +203,11 @@ export function SettingsDialog({
           <Settings className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto bg-surface text-fg border border-border shadow-[var(--shadow-card)] rounded-2xl">
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto bg-surface text-fg border border-border-subtle shadow-[var(--shadow-elevated)] rounded-xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5" />
-            Ignore Patterns Settings
+          <DialogTitle className="font-display flex items-center gap-2">
+            <Settings className="h-4 w-4 text-accent" />
+            Ignore Patterns
           </DialogTitle>
           <DialogDescription>
             Configure patterns to ignore files and directories when processing
@@ -218,47 +218,36 @@ export function SettingsDialog({
 
         <div className="space-y-6">
           {/* Info box */}
-          <div className="bg-[color:color-mix(in_oklab,#60a5fa_12%,transparent)] border border-[color:#60a5fa]/30 rounded-2xl p-4">
-            <div className="flex items-start gap-3">
-              <Info className="h-5 w-5 text-[color:#60a5fa] mt-0.5 flex-shrink-0" />
+          <div className="bg-accent/5 border border-accent/20 rounded-lg p-3">
+            <div className="flex items-start gap-2">
+              <Info className="h-4 w-4 text-accent mt-0.5 shrink-0" />
               <div className="text-sm">
-                <p className="font-medium mb-1">Pattern examples:</p>
-                <ul className="space-y-1 text-xs">
-                  <li>
-                    <code>*.log</code> - matches all .log files
-                  </li>
-                  <li>
-                    <code>test_*</code> - matches files starting with
-                    &quot;test_&quot;
-                  </li>
-                  <li>
-                    <code>temp</code> - matches files/folders containing
-                    &quot;temp&quot;
-                  </li>
-                  <li>
-                    <code>.env</code> - matches exact filename &quot;.env&quot;
-                  </li>
+                <p className="font-medium text-fg mb-1">Pattern examples:</p>
+                <ul className="space-y-0.5 text-xs text-fg-muted">
+                  <li><code className="font-mono bg-muted/50 px-1 rounded">*.log</code> matches all .log files</li>
+                  <li><code className="font-mono bg-muted/50 px-1 rounded">test_*</code> matches files starting with &quot;test_&quot;</li>
+                  <li><code className="font-mono bg-muted/50 px-1 rounded">.env</code> matches exact filename</li>
                 </ul>
               </div>
             </div>
           </div>
 
           {/* Common patterns */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Common Ignore Patterns</h3>
+              <h3 className="font-display text-sm font-semibold">Common Patterns</h3>
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 onClick={resetToDefaults}
-                className="gap-2"
+                className="gap-1.5 text-fg-muted"
               >
-                <RotateCcw className="h-4 w-4" />
-                Reset All
+                <RotateCcw className="h-3.5 w-3.5" />
+                Reset
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 gap-3 max-h-60 overflow-y-auto border border-border rounded-2xl p-4 bg-muted/30">
+            <div className="grid grid-cols-1 gap-2 max-h-52 overflow-y-auto border border-border-subtle rounded-lg p-3 bg-muted/20">
               {COMMON_IGNORE_PATTERNS.map(({ pattern, label, description }) => {
                 const isSelected = selectedCommonPatterns.has(pattern);
                 return (
@@ -288,49 +277,47 @@ export function SettingsDialog({
           </div>
 
           {/* Custom patterns */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Custom Patterns</h3>
+          <div className="space-y-3">
+            <h3 className="font-display text-sm font-semibold">Custom Patterns</h3>
 
             <div className="flex gap-2">
               <Input
-                placeholder="Enter custom pattern (e.g., *.backup, temp_*)"
+                placeholder="e.g., *.backup, temp_*"
                 value={customPattern}
                 onChange={(e) => setCustomPattern(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && addCustomPattern()}
+                className="text-sm"
               />
-              <Button onClick={addCustomPattern} size="sm" className="gap-2">
-                <Plus className="h-4 w-4" />
+              <Button onClick={addCustomPattern} size="sm" className="gap-1.5">
+                <Plus className="h-3.5 w-3.5" />
                 Add
               </Button>
             </div>
 
             {customPatterns.length > 0 && (
               <div className="space-y-2">
-                <p className="text-sm text-fg-muted">Your custom patterns:</p>
-                <div className="space-y-2">
-                  {customPatterns.map((pattern) => (
-                    <div
-                      key={pattern}
-                      className="flex items-center justify-between bg-muted/50 rounded-2xl px-3 py-2 border border-border"
+                {customPatterns.map((pattern) => (
+                  <div
+                    key={pattern}
+                    className="flex items-center justify-between bg-muted/30 rounded-md px-3 py-1.5 border border-border-subtle"
+                  >
+                    <code className="text-xs font-mono">{pattern}</code>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removePattern(pattern)}
+                      className="h-6 w-6 p-0 text-fg-muted hover:text-fg"
                     >
-                      <code className="text-sm font-mono">{pattern}</code>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removePattern(pattern)}
-                        className="gap-1"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                ))}
               </div>
             )}
           </div>
 
           {/* Current count */}
-          <div className="text-sm text-fg-muted border-t border-border pt-4">
+          <div className="text-xs text-fg-muted border-t border-border-subtle pt-3">
             <p>
               Currently ignoring <strong>{ignorePatterns.length}</strong>{" "}
               pattern{ignorePatterns.length !== 1 ? "\u2019s" : ""}

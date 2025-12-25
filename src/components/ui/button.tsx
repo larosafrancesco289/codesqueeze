@@ -11,40 +11,40 @@ export interface ButtonProps
 }
 
 const sizeClasses: Record<Size, string> = {
-  sm: "h-9 px-3 rounded-2xl text-sm",
-  default: "h-10 px-4 rounded-2xl text-sm",
-  lg: "h-11 px-8 rounded-2xl text-base",
-  icon: "h-10 w-10 rounded-2xl",
+  sm: "h-8 px-3 text-sm gap-1.5",
+  default: "h-9 px-4 text-sm gap-2",
+  lg: "h-10 px-5 text-sm gap-2",
+  icon: "h-9 w-9",
 };
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-accent text-black hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[var(--ring-focus)]",
+    "bg-accent text-black font-medium hover:brightness-105 active:brightness-95 shadow-sm",
   outline:
-    "bg-transparent border border-border text-fg hover:bg-muted focus:outline-none focus:ring-2 focus:ring-[var(--ring-focus)]",
+    "bg-transparent border border-border text-fg hover:bg-muted hover:border-border active:bg-muted/80",
   ghost:
-    "bg-transparent text-fg hover:bg-muted focus:outline-none focus:ring-2 focus:ring-[var(--ring-focus)]",
-  link: "text-accent underline-offset-4 hover:underline focus:outline-none focus:ring-2 focus:ring-[var(--ring-focus)]",
+    "bg-transparent text-fg hover:bg-muted active:bg-muted/80",
+  link: "text-accent underline-offset-4 hover:underline",
 };
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     { className = "", variant = "primary", size = "default", ...props },
-    ref,
+    ref
   ) => {
     return (
       <button
         ref={ref}
         className={cn(
-          "inline-flex items-center justify-center gap-2 whitespace-nowrap disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+          "inline-flex items-center justify-center whitespace-nowrap rounded-lg font-medium transition-all duration-150 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas",
           sizeClasses[size],
           variantClasses[variant],
-          className,
+          className
         )}
         {...props}
       />
     );
-  },
+  }
 );
 Button.displayName = "Button";
 
