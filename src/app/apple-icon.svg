@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" fill="none">
+  <defs>
+    <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e6c557"/>
+      <stop offset="50%" style="stop-color:#d4af37"/>
+      <stop offset="100%" style="stop-color:#b9975b"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Dark background for Apple icon -->
+  <rect width="180" height="180" rx="40" fill="#0f0d14"/>
+  
+  <!-- Left bracket < -->
+  <path 
+    d="M62 45 L27 90 L62 135" 
+    stroke="url(#gold-gradient)" 
+    stroke-width="14" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+  />
+  
+  <!-- Right bracket > -->
+  <path 
+    d="M118 45 L153 90 L118 135" 
+    stroke="url(#gold-gradient)" 
+    stroke-width="14" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+  />
+  
+  <!-- Center squeeze indicator -->
+  <rect x="75" y="84" width="30" height="12" rx="6" fill="url(#gold-gradient)"/>
+</svg>

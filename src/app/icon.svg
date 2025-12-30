@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e6c557"/>
+      <stop offset="50%" style="stop-color:#d4af37"/>
+      <stop offset="100%" style="stop-color:#b9975b"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Left bracket < with squeeze arrow -->
+  <path 
+    d="M180 128 L80 256 L180 384" 
+    stroke="url(#gold-gradient)" 
+    stroke-width="48" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+  />
+  
+  <!-- Right bracket > with squeeze arrow -->
+  <path 
+    d="M332 128 L432 256 L332 384" 
+    stroke="url(#gold-gradient)" 
+    stroke-width="48" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+  />
+  
+  <!-- Center squeeze arrows (pointing inward) -->
+  <path 
+    d="M230 256 L256 230 L256 282 L230 256 Z" 
+    fill="url(#gold-gradient)"
+  />
+  <path 
+    d="M282 256 L256 230 L256 282 L282 256 Z" 
+    fill="url(#gold-gradient)"
+  />
+  
+  <!-- Horizontal squeeze line -->
+  <rect x="220" y="248" width="72" height="16" rx="8" fill="url(#gold-gradient)"/>
+</svg>
